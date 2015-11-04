@@ -1,0 +1,11 @@
+Generated
+  rsa_key_1024.pkcs8
+  rsa_key_1024.x509
+  rsa_key_2048.pkcs8
+  rsa_key_2048.x509
+  rsa_key_4096.pkcs8
+  rsa_key_4096.x509
+
+testx509.pem - openssl https://github.com/openssl/openssl/blob/master/test/testx509.pem -- won't load sig mismatch
+altNameEdiCert39.der - mozilla https://bugzilla.mozilla.org/show_bug.cgi?id=233586
+DigiCertGlobalRootG3.crt - http://cacerts.digicert.com/DigiCertGlobalRootG3.crt
