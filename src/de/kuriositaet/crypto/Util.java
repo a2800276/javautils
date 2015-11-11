@@ -1,9 +1,6 @@
 package de.kuriositaet.crypto;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 
 import static java.lang.Character.digit;
 
@@ -85,48 +82,27 @@ public class Util {
     }
 
     public static byte[] readAllClose(InputStream is, int chunkSize) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         byte[] bytes = new byte[chunkSize];
-        int offset = 0;
-        int lenRemaining = chunkSize - offset;
         int read;
         try {
-            while (-1 != (read = is.read(bytes, offset, lenRemaining))) {
-                offset += read;
-                lenRemaining = chunkSize - offset;
-                if (lenRemaining <= 0) {
-                    chunkSize *= 2;
-                    byte[] grown = new byte[chunkSize];
-                    System.arraycopy(bytes, 0, grown, 0, bytes.length);
-                    lenRemaining = chunkSize - offset;
-                    bytes = grown;
-                }
+            while (-1 != (read = is.read(bytes))) {
+                bos.write(bytes, 0, read);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            close(is);
         }
-        close(is);
-        if (lenRemaining != 0) {
-            int lenRead = bytes.length - lenRemaining;
-            byte[] retBytes = new byte[lenRead];
-            System.arraycopy(bytes, 0, retBytes, 0, lenRead);
-            bytes = retBytes;
-        }
-        return bytes;
+        return bos.toByteArray();
     }
 
-    public static void close(InputStream is) {
-        if (is != null) {
+    public static void close(Closeable stream) {
+        if (stream != null) {
             try {
-                is.close();
+                stream.close();
             } catch (IOException e) { /* e.printStackTrace(); */ }
         }
     }
 
-    public static void close(OutputStream os) {
-        if (os != null) {
-            try {
-                os.close();
-            } catch (IOException e) { /* e.printStackTrace(); */ }
-        }
-    }
 }
