@@ -9,6 +9,7 @@ import java.security.cert.CertificateFactory;
 import static de.kuriositaet.crypto.Constants.CERTIFICATE_TYPE_X509;
 
 /**
+ * Utlities to deal with Certificates.
  * Created by a2800276 on 2015-11-03.
  */
 public class Certificate {
@@ -28,11 +29,12 @@ public class Certificate {
     }
 
     /**
+     * Generate the X509 representation of the certificate.
      * @return null in case this certificate can't be expressed as an x509
      * certificate.
      */
     public static byte[] getX509Bytes(java.security.cert.Certificate certificate) {
-        if (!(certificate.getType().equals(CERTIFICATE_TYPE_X509))) {
+        if (certificate == null || !(certificate.getType().equals(CERTIFICATE_TYPE_X509))) {
             return null;
         }
         try {

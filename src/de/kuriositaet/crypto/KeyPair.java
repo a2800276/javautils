@@ -1,6 +1,5 @@
 package de.kuriositaet.crypto;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -12,8 +11,10 @@ import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.*;
 
 import static de.kuriositaet.crypto.Constants.*;
+import static de.kuriositaet.crypto.Util.readAllClose;
 
 /**
+ * Utility to create, serialize and load KeyPair
  * Created by a2800276 on 2015-11-02.
  */
 public class KeyPair {
@@ -25,6 +26,9 @@ public class KeyPair {
 
     public KeyPair(PrivateKey priv, PublicKey pub) {
         this.privKey = priv;
+        if (pub.getPublicKey().getAlgorithm() == "EC" && !(pub instanceof KeyPair.ECPublicKey)) {
+            pub = new ECPublicKey((java.security.interfaces.ECPublicKey) pub.getPublicKey());
+        }
         this.pubKey = pub;
     }
 
@@ -72,7 +76,6 @@ public class KeyPair {
             throw new RuntimeException(e);
         }
     }
-
     static java.security.KeyPair generateJCAKeyPair(Algorithm algorithm) {
         KeyPairGenerator kpg;
         AlgorithmParameterSpec spec;
@@ -333,12 +336,8 @@ public class KeyPair {
 //        }
 
         public static PrivateKey loadPKCS8(InputStream is) throws IOException {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            int r;
-            while ((r = is.read()) != -1) {
-                bos.write(r);
-            }
-            return loadPKCS8(bos.toByteArray());
+            byte[] pkcs8Bytes = readAllClose(is);
+            return loadPKCS8(pkcs8Bytes);
         }
 
         public static PrivateKey loadPKCS8(byte[] bytes) {
@@ -392,7 +391,7 @@ public class KeyPair {
     }
 
     public static class PublicKey {
-        java.security.PublicKey pub;
+        private java.security.PublicKey pub;
 
         public PublicKey(java.security.PublicKey pub) {
             if (!"X.509".equals(pub.getFormat())) {
@@ -401,18 +400,14 @@ public class KeyPair {
             }
             this.pub = pub;
         }
+
+        public static PublicKey loadX509(InputStream is) throws IOException {
+            byte[] x509Bytes = readAllClose(is);
+            return loadX509(x509Bytes);
+        }
 //        public void storeX509(OutputStream out) throws IOException {
 //            out.write(toX509());
 //        }
-
-        public static PublicKey loadX509(InputStream is) throws IOException {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            int r;
-            while ((r = is.read()) != -1) {
-                bos.write(r);
-            }
-            return loadX509(bos.toByteArray());
-        }
 
         public static PublicKey loadX509(byte[] bytes) {
             for (String type : types) {
@@ -425,6 +420,10 @@ public class KeyPair {
                 }
             }
             throw new RuntimeException("invalid key");
+        }
+
+        public java.security.PublicKey getPublicKey() {
+            return pub;
         }
 
         public byte[] toX509() {
@@ -456,18 +455,111 @@ public class KeyPair {
             return pub.hashCode();
         }
     }
-//    public static void main (String [] args) {
-//        p("here");
-//        long time = System.currentTimeMillis();
-//        KeyPair pair = generateKeyPair(Algorithm.RSA);
-//        p(pair.getPublicKey().getClass());
-//        p(System.currentTimeMillis() - time);
-//
-//        for (Algorithm a : Algorithm.values()) {
-//            pair = generateKeyPair(a);
-//            pair.getPublicKey().toX509();
-//        }
-//    }
 
+    public static class ECPublicKey extends KeyPair.PublicKey {
+        public ECPublicKey(java.security.interfaces.ECPublicKey pub) {
+            super(pub);
+        }
 
+        private static int getByteSize(ECParameterSpec params) {
+            int bitLength = params.getCurve().getField().getFieldSize();
+            return (bitLength + 7) >>> 3; // add 7 in case bitLength % 8 != 0
+        }
+
+        public static ECPublicKey loadUncompressedCurvePoints(Algorithm algorithm, byte[] keyData) {
+            switch (algorithm) {
+                case RSA:
+                case DSA:
+                    throw new RuntimeException("not an EC algorithm");
+
+            }
+
+            // There has to be a less moronic way to get the params for a named
+            // curve in the JCA apart from actually generating a key and stealing
+            // those keys params. Look!
+            KeyPair kp = generateKeyPair(algorithm);
+            ECPublicKey ecPublicKey = (ECPublicKey) kp.getPublicKey();
+            java.security.interfaces.ECPublicKey pub = ecPublicKey.getPublicKey();
+            ECParameterSpec params = pub.getParams();
+
+            int byteLength = getByteSize(params);
+
+            if (keyData.length != (byteLength * 2 + 1)) {
+                throw new RuntimeException("invalid length of uncompressed key data");
+            }
+            if (keyData[0] != 0x04) {
+                throw new RuntimeException("invalid format of uncompressed key data");
+            }
+
+            byte[] bytes = new byte[byteLength];
+            System.arraycopy(keyData, 1, bytes, 0, byteLength);
+            BigInteger x = new BigInteger(bytes);
+            System.arraycopy(keyData, byteLength + 1, bytes, 0, byteLength);
+            BigInteger y = new BigInteger(bytes);
+
+            java.security.spec.ECPoint point = new ECPoint(x, y);
+            java.security.spec.ECPublicKeySpec spec = new ECPublicKeySpec(point, params);
+
+            try {
+                KeyFactory keyFactory = KeyFactory.getInstance("EC");
+                ecPublicKey = new ECPublicKey((java.security.interfaces.ECPublicKey) keyFactory.generatePublic(spec));
+            } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+            return ecPublicKey;
+        }
+
+        public static ECPublicKey loadUncompressedCurvePoints(Algorithm a, InputStream is) {
+            byte[] points = readAllClose(is);
+            return loadUncompressedCurvePoints(a, points);
+        }
+
+        @Override
+        public java.security.interfaces.ECPublicKey getPublicKey() {
+            return (java.security.interfaces.ECPublicKey) super.getPublicKey();
+        }
+
+        /**
+         * 4.3.6 of ANSI X9.62. , 2.3.3 SEC1
+         *
+         * @return the uncompressed point representation of this piblic key.
+         */
+        public byte[] toUncompressedCurvePoint() {
+            int byteLength = getByteSize(this.getPublicKey().getParams());
+
+            int size = 1 + (2 * (byteLength));
+            byte[] bytes = new byte[size];
+            bytes[0] = 0x04;
+
+            BigInteger x = this.getPublicKey().getW().getAffineX();
+            BigInteger y = this.getPublicKey().getW().getAffineY();
+            byte[] x_bytes = x.toByteArray();
+            byte[] y_bytes = y.toByteArray();
+
+            copyDespiteJavaBigInteger(x_bytes, bytes, 1, byteLength);
+            copyDespiteJavaBigInteger(y_bytes, bytes, 1 + byteLength, byteLength);
+            return bytes;
+        }
+
+        // java's BigInteger trims leading zeros and adds them in to make sure byte array
+        // represenations are signed ... This is to compensate for wonky lengths.
+        private void copyDespiteJavaBigInteger(byte[] coordinateBytes, byte[] bytes, int offset, int numBytes) {
+            if (coordinateBytes == null || coordinateBytes.length > numBytes + 1) {
+                throw new RuntimeException("incorrect length");
+            }
+            int srcStart = 0;
+            int skip = 0;
+            if (coordinateBytes.length <= numBytes) {
+                // we're fine
+                skip = numBytes - coordinateBytes.length;
+                offset += skip;
+            } else if (coordinateBytes.length == numBytes + 1 && (coordinateBytes[0] == 0x00)) {
+                // java added and additional sign byte...
+                srcStart += 1;
+            } else {
+                throw new RuntimeException("param to long");
+            }
+            System.arraycopy(coordinateBytes, srcStart, bytes, offset, numBytes - skip);
+        }
+    }
 }

@@ -5,6 +5,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 
 /**
+ * Utility to generate Signatures.
+ *
  * Created by a2800276 on 2015-11-02.
  */
 public class Signature {
@@ -28,7 +30,7 @@ public class Signature {
         java.security.Signature sig;
         try {
             sig = java.security.Signature.getInstance(algorithm.toString());
-            sig.initVerify(pub.pub);
+            sig.initVerify(pub.getPublicKey());
             for (byte[] bytes : data) {
                 sig.update(bytes);
             }

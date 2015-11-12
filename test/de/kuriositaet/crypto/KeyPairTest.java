@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import static org.testng.Assert.*;
 
 /**
+ * Test KeyPair s
  * Created by a2800276 on 2015-11-02.
  */
 public class KeyPairTest {
@@ -40,7 +41,7 @@ public class KeyPairTest {
     @Test
     public void testExtractPublicRSAFromPrivate() throws Exception {
         KeyPair pair = KeyPair.generateRSAKeyPair(512);
-        assertEquals(KeyPair.getPublicKeyFromRSACRTPrivateKey(pair.getPrivateKey().pk), pair.getPublicKey().pub);
+        assertEquals(KeyPair.getPublicKeyFromRSACRTPrivateKey(pair.getPrivateKey().pk), pair.getPublicKey().getPublicKey());
 
     }
 
