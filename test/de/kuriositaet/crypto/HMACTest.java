@@ -259,7 +259,12 @@ public class HMACTest {
 
     @Test
     public void testHmac() throws Exception {
-
+        byte[] data = {0, 0, 0};
+        for (Hash.Algorithm a : Hash.Algorithm.values()) {
+            // make sure they're all considered.
+            byte[] key = HMAC.generateKey(a);
+            HMAC.hmac(a, key, data);
+        }
     }
 
     class TestCase {

@@ -5,6 +5,7 @@ import org.testng.annotations.Test;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.math.BigInteger;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import static de.kuriositaet.crypto.Util.readAllClose;
@@ -59,6 +60,15 @@ public class CertificateTest {
         basicTests(cert, "7089244469030293291760083333884364146");
         cert = Certificate.loadCertificate(DER_BYTES);
         basicTests(cert, "44");
+
+        boolean caught = false;
+        try {
+            Certificate.loadCertificate(PEM_BYTES, 1, PEM_BYTES.length - 1);
+        } catch (WrappedException ce) {
+            caught = true;
+            assertEquals(ce.getCause().getClass(), CertificateException.class);
+        }
+        assertTrue(caught);
     }
 
     private void basicTests(java.security.cert.Certificate cert, String serial) {
@@ -73,5 +83,13 @@ public class CertificateTest {
         assertEquals(Certificate.getX509Bytes(cert), PEM_ENCODED_AS_DER_BYTES);
         java.security.cert.Certificate cert2 = Certificate.loadCertificate(DER_BYTES);
         assertEquals(Certificate.getX509Bytes(cert2), DER_BYTES);
+
+        boolean caught = false;
+        try {
+            Certificate.getX509Bytes(null);
+        } catch (IllegalArgumentException e) {
+            caught = true;
+        }
+        assertTrue(caught);
     }
 }

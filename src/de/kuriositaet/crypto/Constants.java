@@ -32,4 +32,6 @@ public class Constants {
      * Certificate Type of X.509 certs.
      */
     public static final String CERTIFICATE_TYPE_X509 = "X.509";
+    public static final String FORMAT_PKCS8 = "PKCS#8";
+    public static final String FORMAT_X509 = "X.509";
 }

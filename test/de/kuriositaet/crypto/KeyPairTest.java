@@ -3,6 +3,7 @@ package de.kuriositaet.crypto;
 import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
+import java.security.interfaces.RSAPrivateCrtKey;
 
 import static org.testng.Assert.*;
 
@@ -41,13 +42,13 @@ public class KeyPairTest {
     @Test
     public void testExtractPublicRSAFromPrivate() throws Exception {
         KeyPair pair = KeyPair.generateRSAKeyPair(512);
-        assertEquals(KeyPair.getPublicKeyFromRSACRTPrivateKey(pair.getPrivateKey().pk), pair.getPublicKey().getPublicKey());
+        assertEquals(KeyPair.getPublicKeyFromRSACRTPrivateKey((RSAPrivateCrtKey) pair.getPrivateKey().getPrivateKey()), pair.getPublicKey().getPublicKey());
 
     }
 
     @Test
     public void testLoadPrivateKeyFromPKCS8() throws Exception {
-        KeyPair pair = KeyPair.generateKeyPair(KeyPair.Algorithm.secp256r1);
+        KeyPair pair = KeyPair.generateKeyPair(KeyPair.Algorithm.P256);
         byte[] pkcs8 = pair.getPrivateKey().toPKCS8();
         ByteArrayInputStream is = new ByteArrayInputStream(pkcs8);
         KeyPair.PrivateKey pk = KeyPair.PrivateKey.loadPKCS8(is);
@@ -55,8 +56,8 @@ public class KeyPairTest {
 
     @Test
     public void testConstructorBytes() throws Exception {
-        KeyPair pair = KeyPair.generateKeyPair(KeyPair.Algorithm.sect193r1);
-        KeyPair pair2 = KeyPair.generateKeyPair(KeyPair.Algorithm.sect193r1);
+        KeyPair pair = KeyPair.generateKeyPair(KeyPair.Algorithm.P521);
+        KeyPair pair2 = KeyPair.generateKeyPair(KeyPair.Algorithm.P521);
         KeyPair pair3 = new KeyPair(pair.getPrivateKey().toPKCS8(), pair.getPublicKey().toX509());
         assertTrue(pair.equals(pair3));
         assertTrue(pair3.equals(pair));

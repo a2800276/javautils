@@ -9,6 +9,12 @@ import java.security.NoSuchAlgorithmException;
 import static de.kuriositaet.crypto.Random.random;
 
 /**
+ * Generate HMAC using a number of widely available Hash Algorithms.
+ * The size of the keying material used for HMAC should ideally be identical to the block
+ * size of the underlying algorithm. (but does not need to be)
+ *
+ * @see https://tools.ietf.org/html/rfc2104
+ * @see http://csrc.nist.gov/publications/fips/fips198-1/FIPS-198-1_final.pdf
  * Created by a2800276 on 2015-10-30.
  */
 public class HMAC {
@@ -17,26 +23,61 @@ public class HMAC {
         return random(Hash.blockSizeBytes(a));
     }
 
+    /**
+     * @throws WrappedException wrapping a NoSuchAlgorithmException in the unlikely event the underlying
+     *                          JCA does not provided the Algorithm or wrapping a InvalidKeyException if using incorrect
+     *                          keying material.
+     */
     public static byte[] hmacMD5(byte[] key, byte[]... data) {
         return hmac(Hash.Algorithm.MD5, key, data);
     }
 
+    /**
+     *
+     * @throws WrappedException wrapping a NoSuchAlgorithmException in the unlikely event the underlying
+     *         JCA does not provided the Algorithm or wrapping a InvalidKeyException if using incorrect
+     *         keying material.
+     */
     public static byte[] hmacSHA1(byte[] key, byte[]... data) {
         return hmac(Hash.Algorithm.SHA1, key, data);
     }
 
+    /**
+     *
+     * @throws WrappedException wrapping a NoSuchAlgorithmException in the unlikely event the underlying
+     *         JCA does not provided the Algorithm or wrapping a InvalidKeyException if using incorrect
+     *         keying material.
+     */
     public static byte[] hmacSHA256(byte[] key, byte[]... data) {
         return hmac(Hash.Algorithm.SHA256, key, data);
     }
 
+    /**
+     *
+     * @throws WrappedException wrapping a NoSuchAlgorithmException in the unlikely event the underlying
+     *         JCA does not provided the Algorithm or wrapping a InvalidKeyException if using incorrect
+     *         keying material.
+     */
     public static byte[] hmacSHA384(byte[] key, byte[]... data) {
         return hmac(Hash.Algorithm.SHA384, key, data);
     }
 
+    /**
+     *
+     * @throws WrappedException wrapping a NoSuchAlgorithmException in the unlikely event the underlying
+     *         JCA does not provided the Algorithm or wrapping a InvalidKeyException if using incorrect
+     *         keying material.
+     */
     public static byte[] hmacSHA512(byte[] key, byte[]... data) {
         return hmac(Hash.Algorithm.SHA512, key, data);
     }
 
+    /**
+     *
+     * @throws WrappedException wrapping a NoSuchAlgorithmException in the unlikely event the underlying
+     *         JCA does not provided the Algorithm or wrapping a InvalidKeyException if using incorrect
+     *         keying material.
+     */
     public static byte[] hmac(Hash.Algorithm algo, byte[] key, byte[]... data) {
         String jca_algo;
         switch (algo) {
@@ -56,7 +97,7 @@ public class HMAC {
                 jca_algo = "HmacSHA512";
                 break;
             default:
-                throw new RuntimeException("invalid: " + algo);
+                throw new IllegalArgumentException("invalid: " + algo);
         }
         try {
             Key k = new SecretKeySpec(key, jca_algo);
@@ -67,7 +108,7 @@ public class HMAC {
             }
             return mac.doFinal();
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new RuntimeException(e);
+            throw new WrappedException(e);
         }
     }
 }
