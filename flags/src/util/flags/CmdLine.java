@@ -32,10 +32,24 @@ package util.flags;
  * In other words, a flag preceded by a dash ('-') is necessary as
  * well as an option name. Standalone flags return an empty string.
  *
+ * Usage is as follows:
+ * <pre>
+ *     ... in main ...
+ *     CmdLine cl = new CmdLine(args);
+ *     // make sure all mandatory flags are passed
+ *     if (!cl.ensure("-filename", "-out")) {
+ *         usage();
+ *     }
+ *
+ *     int defaultPort = cl.get("-port", 8080);
+ *     String fn = cl.get("-filename");
+ * </pre>
+ *
  * @author tim@kuriositaet.de
  */
 
 import java.util.Hashtable;
+import java.util.Set;
 
 public class CmdLine {
 
@@ -47,12 +61,14 @@ public class CmdLine {
 
     /**
      * Initialise these CmdLine Parameters with the given commandline. This
-     * should be the commandline arguments provided to the main method in
-     * (String [] args)
+     * should be the commandline arguments provided to the main method, i.e.
+     * the `args` in <code>public static void main (String [] args)</code>
      */
-    public CmdLine(String[] cmdLine) {
-        this.args = cmdLine;
-        parse();
+    public CmdLine(String[] args) {
+        this.args = args;
+        if (null != this.args) {
+            parse();
+        }
     }
 
     /**
@@ -96,8 +112,14 @@ public class CmdLine {
     /**
      * Retrieve the option with the provided name, returns null if the option
      * was not set.
+     *
+     * <code>String fn = flags.get("-filename")</code>
      */
     public String get(String option) {
+        if (null == option) {
+            // if you get here you're an imbecile.
+            return null;
+        }
         return hash.get(option);
     }
 
@@ -109,13 +131,35 @@ public class CmdLine {
         return null == get(option) ? defaultValue : get(option);
     }
 
+    /**
+     * Retrieve the trailing args with no option flags, e.g. for the
+     * command line:
+     * <pre>
+     *     -fn bla.text -func read_all one two three
+     * </pre>
+     * <p/>
+     * returns <code>{"one", "two", "three"}</code>
+     *
+     * @return
+     */
     public String[] getRest() {
         return this.rest;
     }
 
     /*
      * This returns the args (-flag value ...) portion of the
-     * args. see @
+     * args:
+     *
+     * <pre>
+     *     -fn bla.text -func read_all one two three
+     * </pre>
+     *
+     * returns <code>{"-fn", "bla.text", "-func", "read_all"} </code>
+     *
+     * I have no ideas what this is supposed to be good for, and
+     * will likely to remove next time I come across it.
+     *
+     * @deprecated
      */
     public String[] getArgs() {
         return this.argsArr;
@@ -146,8 +190,11 @@ public class CmdLine {
         return hash.containsKey(option);
     }
 
-    public String[] getFlags() {
-        return hash.keySet().toArray(CAST);
+    /**
+     * @return
+     */
+    public Set<String> getFlags() {
+        return hash.keySet();
     }
 
     /**
