@@ -329,7 +329,7 @@ public class KeyPair {
         }
 
         public static PrivateKey loadPKCS8(InputStream is) throws IOException {
-            byte[] pkcs8Bytes = IO.readAllClose(is);
+            byte[] pkcs8Bytes = IO.readAll(is);
             return loadPKCS8(pkcs8Bytes);
         }
 
@@ -402,7 +402,7 @@ public class KeyPair {
         }
 
         public static PublicKey loadX509(InputStream is) throws IOException {
-            byte[] x509Bytes = IO.readAllClose(is);
+            byte[] x509Bytes = IO.readAll(is);
             return loadX509(x509Bytes);
         }
 
@@ -530,7 +530,7 @@ public class KeyPair {
         }
 
         public static ECPublicKey loadUncompressedCurvePoints(Algorithm a, InputStream is) {
-            byte[] points = IO.readAllClose(is);
+            byte[] points = IO.readAll(is);
             return loadUncompressedCurvePoints(a, points);
         }
 
