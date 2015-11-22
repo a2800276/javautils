@@ -41,7 +41,7 @@ In the simplest form, the parsing and production API follow the Javascript API: 
 Thus:
 
 	String json = "{\"a\":[1]}";
-	Map    m    = (Map)json.JSON.parse(json);
+	Map    m    = (Map)JSON.parse(json);
     
 	List<BugDecimal> l = (List<BigDecimal>)m.get("a");
 	
@@ -65,7 +65,7 @@ As stated above, the intended use case is state machine based parsing. (This is 
 
 ### Arbitrary Object deserialization
 
-In case you have a custom class you wish to deserialize from JSON, I have good news and bad news. The bad news: there is no comprehensive system of generics, annotations and dependency injection semantics to configure deserializing JSON into arbitrary class structures. The good news: there is no comprehensive system of generics, annotations and dependency injection semantics to configure deserializing JSON into arbitrary class structures, instead you can use `json.Lexer` to tokenize a stream of JSON and provide callbacks to implement custom deserialization.
+In case you have a custom class you wish to deserialize from JSON, I have good news and bad news. The bad news: there is no comprehensive system of generics, annotations and dependency injection semantics to configure deserializing JSON into arbitrary class structures. The good news: there is no comprehensive system of generics, annotations and dependency injection semantics to configure deserializing JSON into arbitrary class structures, instead you can use `Lexer` to tokenize a stream of JSON and provide callbacks to implement custom deserialization.
 
 This is, in fact how the default parser is implemented. In case you would like to write a custom callback, have a look at the generic `JSON.LexerCB` contained in `src/json/JSON` for inspiration.
 
