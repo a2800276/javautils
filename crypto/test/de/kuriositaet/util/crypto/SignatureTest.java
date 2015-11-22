@@ -2,8 +2,8 @@ package de.kuriositaet.util.crypto;
 
 import org.testng.annotations.Test;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,8 +62,8 @@ public class SignatureTest {
     static LinkedList<KeyPair.PublicKey> loadRSAPublicKeys() throws IOException {
         LinkedList<KeyPair.PublicKey> l = new LinkedList<>();
         for (String bit : rsa_key_fn) {
-            FileInputStream fis = new FileInputStream("./test/keys/rsa_key_" + bit + ".x509");
-            l.add(KeyPair.PublicKey.loadX509(fis));
+            InputStream stream = ClassLoader.class.getResourceAsStream("/keys/rsa_key_" + bit + ".x509");
+            l.add(KeyPair.PublicKey.loadX509(stream));
         }
         return l;
     }
@@ -71,8 +71,8 @@ public class SignatureTest {
     static LinkedList<KeyPair.PublicKey> loadECPublicKeys() throws IOException {
         LinkedList<KeyPair.PublicKey> l = new LinkedList<>();
         for (String curve : ecc_key_fn) {
-            FileInputStream fis = new FileInputStream("./test/keys/" + curve + "_key.x509");
-            l.add(KeyPair.PublicKey.loadX509(fis));
+            InputStream stream = ClassLoader.class.getResourceAsStream("/keys/" + curve + "_key.x509");
+            l.add(KeyPair.PublicKey.loadX509(stream));
         }
         return l;
     }
@@ -128,8 +128,8 @@ public class SignatureTest {
     private List<KeyPair.PrivateKey> loadRSAPrivateKeys() throws IOException {
         LinkedList<KeyPair.PrivateKey> l = new LinkedList<>();
         for (String bit : rsa_key_fn) {
-            FileInputStream fis = new FileInputStream("./test/keys/rsa_key_" + bit + ".pkcs8");
-            l.add(KeyPair.PrivateKey.loadPKCS8(fis));
+            InputStream stream = ClassLoader.class.getResourceAsStream("/keys/rsa_key_" + bit + ".pkcs8");
+            l.add(KeyPair.PrivateKey.loadPKCS8(stream));
         }
         return l;
     }
@@ -171,8 +171,8 @@ public class SignatureTest {
     private List<KeyPair.PrivateKey> loadECCPrivateKeys() throws IOException {
         LinkedList<KeyPair.PrivateKey> l = new LinkedList<>();
         for (String curve : ecc_key_fn) {
-            FileInputStream fis = new FileInputStream("./test/keys/" + curve + "_key.pkcs8");
-            l.add(KeyPair.PrivateKey.loadPKCS8(fis));
+            InputStream stream = ClassLoader.class.getResourceAsStream("/keys/" + curve + "_key.pkcs8");
+            l.add(KeyPair.PrivateKey.loadPKCS8(stream));
         }
         return l;
     }

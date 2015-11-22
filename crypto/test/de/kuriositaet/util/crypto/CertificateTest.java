@@ -2,8 +2,7 @@ package de.kuriositaet.util.crypto;
 
 import org.testng.annotations.Test;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -16,39 +15,35 @@ import static org.testng.Assert.assertTrue;
  */
 public class CertificateTest {
 
-    final static String PEM_FN = "test/keys/DigiCertGlobalRootG3.pem";
-    final static String PEM_ENCODED_AS_DER_FN = "test/keys/DigiCertGlobalRootG3.crt";
-    final static String DER_FN = "test/keys/altNameEdiCert39.der";
+    final static String PEM_FN = "/keys/DigiCertGlobalRootG3.pem";
+    final static String PEM_ENCODED_AS_DER_FN = "/keys/DigiCertGlobalRootG3.crt";
+    final static String DER_FN = "/keys/altNameEdiCert39.der";
 
     static byte[] PEM_BYTES;
     static byte[] PEM_ENCODED_AS_DER_BYTES;
     static byte[] DER_BYTES;
 
     static {
-        try {
-            FileInputStream fis = new FileInputStream(PEM_FN);
-            PEM_BYTES = Util.readAllClose(fis, 100);
-            fis = new FileInputStream(DER_FN);
-            DER_BYTES = Util.readAllClose(fis);
-            fis = new FileInputStream(PEM_ENCODED_AS_DER_FN);
-            PEM_ENCODED_AS_DER_BYTES = Util.readAllClose(fis);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        InputStream inputStream = ClassLoader.class.getResourceAsStream(PEM_FN);
+        PEM_BYTES = Util.readAllClose(inputStream, 1024);
+        inputStream = ClassLoader.class.getResourceAsStream(DER_FN);
+        DER_BYTES = Util.readAllClose(inputStream);
+        inputStream = ClassLoader.class.getResourceAsStream(PEM_ENCODED_AS_DER_FN);
+        PEM_ENCODED_AS_DER_BYTES = Util.readAllClose(inputStream);
 
     }
 
     @Test
     public void testLoadCertificateInputStream() throws Exception {
-        FileInputStream fis = new FileInputStream(PEM_FN);
-        java.security.cert.Certificate cert = Certificate.loadCertificate(fis);
+        InputStream stream = ClassLoader.class.getResourceAsStream(PEM_FN);
+        java.security.cert.Certificate cert = Certificate.loadCertificate(stream);
         basicTests(cert, "7089244469030293291760083333884364146");
-        fis.close();
+        stream.close();
 
-        fis = new FileInputStream(DER_FN);
-        java.security.cert.Certificate cert2 = Certificate.loadCertificate(fis);
+        stream = ClassLoader.class.getResourceAsStream(DER_FN);
+        java.security.cert.Certificate cert2 = Certificate.loadCertificate(stream);
         basicTests(cert2, "44");
-        fis.close();
+        stream.close();
 
     }
 
