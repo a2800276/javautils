@@ -1,4 +1,4 @@
-package de.kuriositaet.crypto;
+package de.kuriositaet.util.crypto;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -6,21 +6,20 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
-import static de.kuriositaet.crypto.Random.random;
-
 /**
- * Generate HMAC using a number of widely available Hash Algorithms.
+ * Utilities to generate HMACs.
+ * <p>
  * The size of the keying material used for HMAC should ideally be identical to the block
  * size of the underlying algorithm. (but does not need to be)
  *
- * @see https://tools.ietf.org/html/rfc2104
- * @see http://csrc.nist.gov/publications/fips/fips198-1/FIPS-198-1_final.pdf
- * Created by a2800276 on 2015-10-30.
+ * @see
+ * link https://tools.ietf.org/html/rfc2104
+ * link http://csrc.nist.gov/publications/fips/fips198-1/FIPS-198-1_final.pdf FIPS-198-1
  */
 public class HMAC {
 
     public static byte[] generateKey(Hash.Algorithm a) {
-        return random(Hash.blockSizeBytes(a));
+        return Random.random(Hash.blockSizeBytes(a));
     }
 
     /**
@@ -110,5 +109,6 @@ public class HMAC {
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             throw new WrappedException(e);
         }
+
     }
 }

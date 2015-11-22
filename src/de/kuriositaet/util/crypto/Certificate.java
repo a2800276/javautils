@@ -1,12 +1,10 @@
-package de.kuriositaet.crypto;
+package de.kuriositaet.util.crypto;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-
-import static de.kuriositaet.crypto.Constants.CERTIFICATE_TYPE_X509;
 
 /**
  * Utilities to deal with Certificates.
@@ -49,7 +47,7 @@ public class Certificate {
      */
     public static java.security.cert.Certificate loadCertificate(InputStream is) {
         try {
-            CertificateFactory cf = CertificateFactory.getInstance(CERTIFICATE_TYPE_X509);
+            CertificateFactory cf = CertificateFactory.getInstance(Constants.CERTIFICATE_TYPE_X509);
             return cf.generateCertificate(is);
         } catch (CertificateException e) {
             throw new WrappedException(e);
@@ -64,7 +62,7 @@ public class Certificate {
      *         CryptoException wrapping an underlying CertificateEncodingException if "encoding errors occur"
      */
     public static byte[] getX509Bytes(java.security.cert.Certificate certificate) {
-        if (certificate == null || !(certificate.getType().equals(CERTIFICATE_TYPE_X509))) {
+        if (certificate == null || !(certificate.getType().equals(Constants.CERTIFICATE_TYPE_X509))) {
             throw new IllegalArgumentException("can not convert to x509");
         }
         try {

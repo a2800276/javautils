@@ -1,8 +1,8 @@
-package de.kuriositaet.crypto;
+package de.kuriositaet.util.crypto;
 
 import org.testng.annotations.Test;
 
-import static de.kuriositaet.crypto.Util.h2b;
+import static de.kuriositaet.util.crypto.Util.h2b;
 import static org.testng.Assert.assertEquals;
 
 

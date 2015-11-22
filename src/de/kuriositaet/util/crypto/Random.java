@@ -1,4 +1,4 @@
-package de.kuriositaet.crypto;
+package de.kuriositaet.util.crypto;
 
 import java.security.SecureRandom;
 

@@ -1,8 +1,8 @@
-package de.kuriositaet.crypto;
+package de.kuriositaet.util.crypto;
 
 import org.testng.annotations.Test;
 
-import static de.kuriositaet.crypto.Random.random;
+import static de.kuriositaet.util.crypto.Random.random;
 import static org.testng.Assert.assertTrue;
 
 /**

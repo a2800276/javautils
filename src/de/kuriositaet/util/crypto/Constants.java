@@ -1,14 +1,16 @@
-package de.kuriositaet.crypto;
+package de.kuriositaet.util.crypto;
 
 import java.math.BigInteger;
 import java.security.spec.RSAKeyGenParameterSpec;
 
 /**
- * Created by a2800276 on 2015-11-02.
+ *  Provides a handy container for Constants used throughout the code,
+ *  it's unlikely that users of the library need access to these constants.
+ *
  */
 public class Constants {
     /**
-     * Default RSA Keysize if no specifically mentioned (2048).
+     * Default RSA Keysize if not specifically mentioned (2048).
      */
 
     public static final int RSA_DEFAULT_KEYSIZE = 2048;

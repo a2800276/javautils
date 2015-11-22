@@ -1,4 +1,4 @@
-package de.kuriositaet.crypto;
+package de.kuriositaet.util.crypto;
 
 import org.testng.annotations.Test;
 
@@ -42,7 +42,7 @@ public class KeyPairTest {
     @Test
     public void testExtractPublicRSAFromPrivate() throws Exception {
         KeyPair pair = KeyPair.generateRSAKeyPair(512);
-        assertEquals(KeyPair.getPublicKeyFromRSACRTPrivateKey((RSAPrivateCrtKey) pair.getPrivateKey().getPrivateKey()), pair.getPublicKey().getPublicKey());
+        assertEquals(KeyPair.getPublicKeyFromRSACRTPrivateKey((RSAPrivateCrtKey) pair.getPrivateKey().getJCAPrivateKey()), pair.getPublicKey().getJCAPublicKey());
 
     }
 

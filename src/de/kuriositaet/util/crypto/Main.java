@@ -1,10 +1,8 @@
-package de.kuriositaet.crypto;
+package de.kuriositaet.util.crypto;
 
 import javax.crypto.CipherInputStream;
 import java.security.Provider;
 import java.security.Security;
-
-import static de.kuriositaet.crypto.Util.p;
 
 public class Main {
     public static void main(String[] args) throws Throwable {
@@ -15,11 +13,11 @@ public class Main {
     }
 
     private static void dumpProvider(Provider provider) {
-        p("------------------------------------------------------------------------");
-        p("Provider: " + provider.getName());
-        p("Services: ");
+        Util.p("------------------------------------------------------------------------");
+        Util.p("Provider: " + provider.getName());
+        Util.p("Services: ");
         for (Provider.Service service : provider.getServices()) {
-            p(service);
+            Util.p(service);
 //            if (service.getType().equals("AlgorithmParameters") && null != service.getAttribute("SupportedCurves")) {
 //                for (String curve : service.getAttribute("SupportedCurves").split("\\|")){
 //                  p(curve.split(",")[0]);
@@ -28,7 +26,7 @@ public class Main {
 //
 //            }
         }
-        p("------------------------------------------------------------------------");
+        Util.p("------------------------------------------------------------------------");
     }
 
     public void test(byte[] testdata) {

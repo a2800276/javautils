@@ -1,4 +1,4 @@
-package de.kuriositaet.crypto;
+package de.kuriositaet.util.crypto;
 
 /**
  * This class provides a RuntimeException (tagged to indicate exceptions stem from use of this library).

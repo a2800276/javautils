@@ -1,4 +1,4 @@
-package de.kuriositaet.crypto;
+package de.kuriositaet.util.crypto;
 
 import org.testng.annotations.Test;
 
@@ -8,7 +8,6 @@ import java.math.BigInteger;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-import static de.kuriositaet.crypto.Util.readAllClose;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -28,11 +27,11 @@ public class CertificateTest {
     static {
         try {
             FileInputStream fis = new FileInputStream(PEM_FN);
-            PEM_BYTES = readAllClose(fis, 100);
+            PEM_BYTES = Util.readAllClose(fis, 100);
             fis = new FileInputStream(DER_FN);
-            DER_BYTES = readAllClose(fis);
+            DER_BYTES = Util.readAllClose(fis);
             fis = new FileInputStream(PEM_ENCODED_AS_DER_FN);
-            PEM_ENCODED_AS_DER_BYTES = readAllClose(fis);
+            PEM_ENCODED_AS_DER_BYTES = Util.readAllClose(fis);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
