@@ -1,5 +1,7 @@
 package util.crypto;
 
+import util.io.IO;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -11,7 +13,6 @@ import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.*;
 
 import static util.crypto.Constants.*;
-import static util.crypto.Util.readAllClose;
 
 /**
  * Utility to create, serialize and load KeyPair's
@@ -328,7 +329,7 @@ public class KeyPair {
         }
 
         public static PrivateKey loadPKCS8(InputStream is) throws IOException {
-            byte[] pkcs8Bytes = readAllClose(is);
+            byte[] pkcs8Bytes = IO.readAllClose(is);
             return loadPKCS8(pkcs8Bytes);
         }
 
@@ -401,7 +402,7 @@ public class KeyPair {
         }
 
         public static PublicKey loadX509(InputStream is) throws IOException {
-            byte[] x509Bytes = readAllClose(is);
+            byte[] x509Bytes = IO.readAllClose(is);
             return loadX509(x509Bytes);
         }
 
@@ -529,7 +530,7 @@ public class KeyPair {
         }
 
         public static ECPublicKey loadUncompressedCurvePoints(Algorithm a, InputStream is) {
-            byte[] points = readAllClose(is);
+            byte[] points = IO.readAllClose(is);
             return loadUncompressedCurvePoints(a, points);
         }
 

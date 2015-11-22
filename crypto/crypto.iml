@@ -18,5 +18,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="io" />
+    <orderEntry type="module" module-name="bytes" scope="TEST" />
   </component>
 </module>

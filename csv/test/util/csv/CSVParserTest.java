@@ -1,12 +1,14 @@
-package de.kuriositaet.utils.csv; 
+package util.csv;
 
-import junit.framework.TestCase;
-import org.junit.Test;
+
+import org.testng.annotations.Test;
 
 import java.util.List;
 
+import static org.testng.Assert.*;
 
-public class CSVParserTest extends TestCase {
+
+public class CSVParserTest {
 
 	static final String BASIC_TEST = "one;two;three";
 	static final String BASIC_TEST2 = "one;two;three\none;two;three\none;two;three";
@@ -20,7 +22,8 @@ public class CSVParserTest extends TestCase {
 	static final String PATTERN_TEST2 = "one;two;four\nthree;zwei;drei";
 	static final String [] PATTERN = {".*", "two|zwei", ".*r$"};
 
-	@Test public void testBasics() {
+	@Test
+	public void testBasics() {
 		CSVParser parser = new CSVParser(BASIC_TEST);
 		List<String> res = parser.getNextLine();
 		assertEquals(3, res.size());
@@ -47,7 +50,7 @@ public class CSVParserTest extends TestCase {
 		assertEquals("one", res.get(0));
 		assertEquals("three", res.get(2));
 		assertTrue(parser.hasErrors());
-		System.out.println(parser.getErrorMessage());
+		assertEquals(parser.getErrorMessage(), "line   1 : incorrect number of fields, expected 2, was 3\n\t" + BASIC_TEST + "\n");
 
 		parser = new CSVParser(BASIC_TEST2);
 		parser.setComment("//");
@@ -85,7 +88,7 @@ public class CSVParserTest extends TestCase {
 		}
 		assertEquals(2, count);
 		assertTrue(parser.hasErrors());
-		System.out.println(parser.getErrorMessage());
+		assertEquals(parser.getErrorMessage(), "line   2 : incorrect format for field 3, value \"drei\" expected to match /.*r$/\n\tthree;zwei;drei\n");
 
 	}
 
@@ -151,7 +154,7 @@ public class CSVParserTest extends TestCase {
 		assertEquals("three", res.get(2));
 		assertTrue(parser.hasErrors());
 
-		System.out.println(parser.getErrorMessage());
+		assertEquals(parser.getErrorMessage(), "line   1 : csv line ends in delimeter!\n\t" + ESC2_TEST + "\n");
 
 	}
 

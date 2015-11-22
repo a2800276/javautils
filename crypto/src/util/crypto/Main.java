@@ -13,11 +13,11 @@ public class Main {
     }
 
     private static void dumpProvider(Provider provider) {
-        Util.p("------------------------------------------------------------------------");
-        Util.p("Provider: " + provider.getName());
-        Util.p("Services: ");
+        p("------------------------------------------------------------------------");
+        p("Provider: " + provider.getName());
+        p("Services: ");
         for (Provider.Service service : provider.getServices()) {
-            Util.p(service);
+            p(service);
 //            if (service.getType().equals("AlgorithmParameters") && null != service.getAttribute("SupportedCurves")) {
 //                for (String curve : service.getAttribute("SupportedCurves").split("\\|")){
 //                  p(curve.split(",")[0]);
@@ -26,7 +26,11 @@ public class Main {
 //
 //            }
         }
-        Util.p("------------------------------------------------------------------------");
+        p("------------------------------------------------------------------------");
+    }
+
+    static void p(Object s) {
+        System.out.println(s);
     }
 
     public void test(byte[] testdata) {

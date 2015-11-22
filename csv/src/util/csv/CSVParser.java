@@ -13,7 +13,8 @@ import java.util.regex.Pattern;
  * settings may be changed using `setDelimiter()` and `setEscape()`
  * respectively. The escape character will pass the following character through,
  * unless it is used at the end of a line or the end of the file, in which
- * case an error is reported. This means, no newlines in csv fields.
+ * case an error is reported. This means, no newlines in csv fields. (Though of course
+ * you can have 'one;two\\ntwo;three'.
  * <p/>
  * usage:
  * <pre>

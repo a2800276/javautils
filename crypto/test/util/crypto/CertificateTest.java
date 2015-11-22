@@ -1,6 +1,7 @@
 package util.crypto;
 
 import org.testng.annotations.Test;
+import util.io.IO;
 
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -25,11 +26,11 @@ public class CertificateTest {
 
     static {
         InputStream inputStream = ClassLoader.class.getResourceAsStream(PEM_FN);
-        PEM_BYTES = Util.readAllClose(inputStream, 1024);
+        PEM_BYTES = IO.readAllClose(inputStream, 1024);
         inputStream = ClassLoader.class.getResourceAsStream(DER_FN);
-        DER_BYTES = Util.readAllClose(inputStream);
+        DER_BYTES = IO.readAllClose(inputStream);
         inputStream = ClassLoader.class.getResourceAsStream(PEM_ENCODED_AS_DER_FN);
-        PEM_ENCODED_AS_DER_BYTES = Util.readAllClose(inputStream);
+        PEM_ENCODED_AS_DER_BYTES = IO.readAllClose(inputStream);
 
     }
 
