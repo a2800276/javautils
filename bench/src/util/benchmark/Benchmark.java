@@ -1,4 +1,4 @@
-package util.bytes.benchmark;
+package util.benchmark;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -6,37 +6,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-abstract class InternalBenchmark {
-    String name;
-
-    abstract void runBenchmark(Benchmark b);
-}
-
-class BenchmarkResult {
-
-    int n;
-    long ns;
-    long bytes;
-
-    BenchmarkResult(int n, long ns, long bytes) {
-        this.n = n;
-        this.ns = ns;
-        this.bytes = bytes;
-    }
-
-    long nsPerOp() {
-        return this.n <= 0 ? 0 : this.ns / this.n;
-    }
-
-    public String toString() {
-        long ns = this.nsPerOp();
-        String mb = "";
-        if (ns > 0 && this.bytes > 0) {
-            mb = String.format("\t%7.2f MB/s", (this.bytes / 1e6) / (ns / 1e9));
-        }
-        return String.format("%8d\t%10d ns/op%s", this.n, ns, mb);
-    }
-}
 
 /**
  * Benchmark is a small utility to quickly and easily run simple
@@ -449,4 +418,38 @@ public class Benchmark {
         }
     }
 
+
+
+}
+
+abstract class InternalBenchmark {
+	String name;
+
+	abstract void runBenchmark(Benchmark b);
+}
+
+class BenchmarkResult {
+
+	int n;
+	long ns;
+	long bytes;
+
+	BenchmarkResult(int n, long ns, long bytes) {
+		this.n = n;
+		this.ns = ns;
+		this.bytes = bytes;
+	}
+
+	long nsPerOp() {
+		return this.n <= 0 ? 0 : this.ns / this.n;
+	}
+
+	public String toString() {
+		long ns = this.nsPerOp();
+		String mb = "";
+		if (ns > 0 && this.bytes > 0) {
+			mb = String.format("\t%7.2f MB/s", (this.bytes / 1e6) / (ns / 1e9));
+		}
+		return String.format("%8d\t%10d ns/op%s", this.n, ns, mb);
+	}
 }
