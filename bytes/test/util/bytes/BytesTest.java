@@ -29,9 +29,14 @@ public class BytesTest {
 		return checkThrows(NullPointerException.class, doer);
 	}
 
+	static boolean checkThrowsIllegal(CB doer) {
+		return checkThrows(IllegalArgumentException.class, doer);
+	}
+
 	static boolean checkThrows(Class exceptionClass, CB doer) {
 		try {
 			doer.go();
+			assertTrue(false);
 			return false;
 		} catch (Throwable t) {
 			assertEquals(exceptionClass, t.getClass());
@@ -118,6 +123,46 @@ public class BytesTest {
 			}
 		}));
 
+
+	}
+
+	@Test
+	public void testSplit() throws Exception {
+		checkThrowsIllegal(new CB() {
+			@Override
+			public void go() throws Throwable {
+				Bytes.split(null, 1);
+			}
+		});
+		checkThrowsIllegal(new CB() {
+			@Override
+			public void go() throws Throwable {
+				Bytes.split(random(16), 16);
+			}
+		});
+		checkThrowsIllegal(new CB() {
+			@Override
+			public void go() throws Throwable {
+				Bytes.split(EMPTY, -1);
+			}
+		});
+		checkThrowsIllegal(new CB() {
+			@Override
+			public void go() throws Throwable {
+				byte[][] bs = Bytes.split(EMPTY, 0);
+			}
+		});
+
+		byte[] one = random(32);
+		byte[] two = random(32);
+		byte[] onetwo = Bytes.append(one, two);
+
+		for (int i = 0; i != onetwo.length; ++i) {
+			byte[][] bs = Bytes.split(onetwo, i);
+			assertEquals(bs[0].length, i);
+			assertEquals(bs[1].length, onetwo.length - i);
+			checkStartsWith(bs[0], one);
+		}
 
 	}
 

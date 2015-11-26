@@ -107,6 +107,27 @@ public class Bytes {
 		return joined;
 	}
 
+	/**
+	 * Split an array into two halfes at `pos`. I.e. `pos` is the
+	 * position of the first byte of the second array.
+	 *
+	 * @param bytes a non empty array to split
+	 * @return an array consisting of two byte arrays, one of which may be empty.
+	 */
+	public static byte[][] split(byte[] bytes, int pos) {
+		if (bytes == null || pos < 0 || pos >= bytes.length) {
+			throw new IllegalArgumentException("bytes or pos invalid");
+		}
+		byte[] bs_one = new byte[pos];
+		byte[] bs_two = new byte[bytes.length - pos];
+
+		System.arraycopy(bytes, 0, bs_one, 0, pos);
+		System.arraycopy(bytes, pos, bs_two, 0, bytes.length - pos);
+
+		byte[][] ret = {bs_one, bs_two};
+		return ret;
+	}
+
 	public static void main(String[] args) {
 		p(b2s(h2b("5448884063169011D1711201158090354F")));
 	}
