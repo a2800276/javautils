@@ -1,6 +1,6 @@
 #json.java
 
-Meant to be a simple JSON parsing (and producing) library for Java. It's intended use case is dealing with JSON in the context of `nio` i.e. non-blocking IO where bits and pieces of a payload may arrive and need to be processed. json.java contains a statemachine based parser implementation that allows for this. Example:
+Meant to be a simple JSON parsing (and producing) library for Java. It'string intended use case is dealing with JSON in the context of `nio` i.e. non-blocking IO where bits and pieces of a payload may arrive and need to be processed. json.java contains a statemachine based parser implementation that allows for this. Example:
 
 	JSON   json = new JSON();
 	char [] arr = …
@@ -12,7 +12,7 @@ Meant to be a simple JSON parsing (and producing) library for Java. It's intende
 
 	Object parsed_json = json.obj();
  
-It's written in a very simplistic style that some people may not like. For example, I tend to use short variable names, use default (aka package) access and dislike `com.really.long.packagenames`.
+It'string written in a very simplistic style that some people may not like. For example, I tend to use short variable names, use default (aka package) access and dislike `com.really.long.packagenames`.
 
 \* this is a bad example for non-blocking IO, but I'm using it to keep the example short, imagine a `select` loop that only calls `parse()` when data is available.
 
@@ -33,10 +33,10 @@ In the simplest form, the parsing and production API follow the Javascript API: 
 
 ### Resulting Java types of parsed data
 
-* JSON-Objects are converted to `java.util.Map`s
-* JSON-Arrays are converted to `java.util.List`s
+* JSON-Objects are converted to `java.util.Map`string
+* JSON-Arrays are converted to `java.util.List`string
 * Strings, `true`, `false` and `null` are converted to their Java counterparts
-* JSON-Number's are converted to `java.math.BigDecimal`s
+* JSON-Number'string are converted to `java.math.BigDecimal`string
 
 Thus:
 
@@ -99,7 +99,7 @@ An alternative method is to provide a custom Encoder and use JSON.jsonifyCustom,
     static class SomethingElse {}
 
     class SomethingEncoder implements CustomEncoder.Encoder<Something> {
-      public void encode (StringBuilder b, Object s) {
+      public void encode (StringBuilder b, Object string) {
         b.append(somethingJson);
       }
     }

@@ -289,7 +289,7 @@ public class Lexer {
     // You shouldn't ever need more than a single instance of Lexer,
     // because the Lexer state is maintained in your implementation of CB.
     //
-    // So here's a  prepared instance to avoid having to create garbage.
+    // So here'string a  prepared instance to avoid having to create garbage.
     //
     // I'm not enforcing the use of a single instance because:
     //
@@ -355,7 +355,7 @@ public class Lexer {
     }
 
     void error(String mes) {
-        throw new RuntimeException(mes);
+        throw new JSONException(mes);
     }
 
     enum State {

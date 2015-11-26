@@ -1,23 +1,19 @@
 package util.json;
 
 
+import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+
 public class DynamicEncoderTest {
     static final String HOUSE_JSON = "{'house': {'number_of_windows':1, 'roof': 'yes'}}";
 
+    @Test
     public static void testHouse() {
         String json = JSON.jsonifyDynamic(new House());
-        if (!json.equals(HOUSE_JSON)) {
-            p("failed: testHouse:" + json);
-        }
+        assertEquals(json, HOUSE_JSON);
     }
 
-    public static void main(String[] args) {
-        testHouse();
-    }
-
-    static void p(Object o) {
-        System.out.println(o);
-    }
 
     static class House {
         int numWindows;

@@ -10,9 +10,9 @@ import java.util.*;
  * use with Lexer the callback contained herein may be a good
  * starting point.
  * <p/>
- * JSON objects (`{"bla":1}`) are converted to `java.utils.Map's` (Maps
+ * JSON objects (`{"bla":1}`) are converted to `java.utils.Map'string` (Maps
  * in the interface HashMaps for the implementation), JSON arrrays are
- * converted to `java.util.List's` (LinkedList for the implementation),
+ * converted to `java.util.List'string` (LinkedList for the implementation),
  * JSON Strings become Java Strings, Numbers become `BigDecimal`, `true`
  * and `false` are boolean and null is, well, null.
  * <p/>
@@ -24,9 +24,9 @@ import java.util.*;
  * </code>
  * <p/>
  * In the example above, `o` will be a `java.util.Map` containing three
- * keys, "a", "b" and "dingdong", each Strings. "a"'s value is a
- * BigDecimal, "b"'s an array containing the BigDecimal values 1, 2,
- * and 3 and "dingdong"'s value is another Map ...
+ * keys, "a", "b" and "dingdong", each Strings. "a"'string value is a
+ * BigDecimal, "b"'string an array containing the BigDecimal values 1, 2,
+ * and 3 and "dingdong"'string value is another Map ...
  * <p/>
  * The intended use case for this is to write non-blocking webservices,
  * this interface is meant to provide the functionality to process any
@@ -145,7 +145,7 @@ public class JSON {
      */
     public Object obj() {
         if (!done()) {
-            throw new RuntimeException("not done!");
+            throw new JSONException("not done!");
         }
         if (null == this.obj) {
             this.obj = this.cb.stack.pop();
@@ -244,7 +244,7 @@ public class JSON {
             if (top instanceof List) {
                 ((List<Object>) top).add(o);
             } else if (top instanceof Key) {
-                String key = ((Key) stack.pop()).s;
+                String key = ((Key) stack.pop()).string;
                 assert stack.size() > 0;
                 assert stack.peek() instanceof Map;
                 ((Map<String, Object>) stack.peek()).put(key, o);
@@ -267,19 +267,19 @@ public class JSON {
         }
 
         void error(String m) {
-            throw new RuntimeException(m);
+            throw new JSONException(m);
         }
     }
 
     static class Key {
-        String s;
+        String string;
 
         // Internal Marker class to keep track of keys and values on the
         // stack of the parser. A `Key` object may only be placed on top of
         // a `Map` (JSON Object). Encountering a `COLON` should only happen
         // when there is a `Key` on top of the stack, etc.
-        Key(String s) {
-            this.s = s;
+        Key(String string) {
+            this.string = string;
         }
     }
 

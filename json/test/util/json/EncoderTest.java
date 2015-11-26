@@ -1,10 +1,21 @@
 package util.json;
 
+import org.testng.annotations.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 public class EncoderTest {
-    static void testBaseTypes() {
+    static void p(Object o) {
+        System.out.println(o);
+    }
+
+    @Test
+    public void testBaseTypes() {
+
         StringBuilder b = new StringBuilder();
         Encoder.encode(b, true);
         Encoder.encode(b, 1);
@@ -14,74 +25,61 @@ public class EncoderTest {
         Encoder.encode(b, (byte) 1);
         Encoder.encode(b, (short) 1);
         Encoder.encode(b, '1');
-        if (!b.toString().equals("true111.01.01149")) {
-            p("testBaseTypes failed: " + b.toString());
-        }
+        assertEquals(b.toString(), "true111.01.01149");
     }
 
-    static void testMap() {
+    @Test
+    public void testMap() {
         String json = "{\"a\":19560954609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}}";
         Map m = (Map) JSON.parse(json);
-        if (!m.containsKey("a") ||
-                !m.containsKey("b") ||
-                !m.containsKey("dindong")) {
-            p("testMap failed: missing key");
-        }
+        assertTrue(m.containsKey("a"));
+        assertTrue(m.containsKey("b"));
+        assertTrue(m.containsKey("dindong"));
+
+
         p("should look the same");
         p(json);
         p(JSON.jsonify(m));
+
+        assertEquals(m, JSON.parse(JSON.jsonify(m)));
     }
 
-    static void testArray() {
+    @Test
+    public void testArray() {
         int[] is = {1, 2, 3};
         String r = JSON.jsonify(is);
-        if (!r.equals("[1,2,3]")) {
-            p("testArray failed: " + r);
-        }
+        assertEquals(r, "[1,2,3]");
     }
 
-    static void testCircular() {
+    @Test
+    public void testCircular() {
         Map map = new java.util.HashMap();
         map.put("bla", map);
+        boolean caught = false;
         try {
             p(JSON.jsonify(map));
-            p("failed: data contained circular refs, should have thrown exception");
-        } catch (RuntimeException re) {
-            p("expected failure: \n\t" + re.getMessage());
+        } catch (JSONException re) {
+            assertEquals(re.getMessage(), "circular");
+            caught = true;
         }
+        assertTrue(caught);
     }
 
-    static void testNonBaseType() {
+    @Test
+    public void testNonBaseType() {
         try {
             JSON.jsonify(System.out);
-        } catch (RuntimeException re) {
-            p("expected failure: \n\t" + re.getMessage());
-            return;
+            assertTrue(false);
+        } catch (JSONException re) {
+            assertEquals(re.getMessage(), "unexpected object: class java.io.PrintStream");
         }
-        p("failed expected unexpected object failure");
-
     }
 
-    static void testBoolean() {
+    @Test
+    public void testBoolean() {
         Map map = new HashMap();
         map.put("bla", true);
         String json = JSON.jsonify(map);
-        if (!(json.equals("{\"bla\":true}"))) {
-            p("testBoolean failed: " + json);
-        }
-    }
-
-
-    public static void main(String[] args) {
-        testBaseTypes();
-        testMap();
-        testArray();
-        testCircular();
-        testNonBaseType();
-        testBoolean();
-    }
-
-    static void p(Object o) {
-        System.out.println(o);
+        assertEquals(json, "{\"bla\":true}");
     }
 }

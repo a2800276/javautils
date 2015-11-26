@@ -1,5 +1,6 @@
 package util.json;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class DynamicEncoder extends Encoder {
@@ -20,8 +21,8 @@ public class DynamicEncoder extends Encoder {
         try {
             m = c.getDeclaredMethod("toJSON");
             buf.append(m.invoke(o));
-        } catch (Throwable t) {
-            eggsplod("ugh.");
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            error(e);
         }
     }
 }

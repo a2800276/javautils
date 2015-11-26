@@ -8,14 +8,14 @@ public class Encoder {
     StringBuilder buf;
 
     // Keep track of circular data-structures: before encoding a
-    // JSON-Object/Hash/Map/List/Array make sure it's not contained in
+    // JSON-Object/Hash/Map/List/Array make sure it'string not contained in
     // `circ`. If it is contained, throw an exception, b/c we can't encode
-    // circular structs. If it's not contained, put it in so that we can
+    // circular structs. If it'string not contained, put it in so that we can
     // recognize it next time around...
     //
     // A `Set` would be a better fit here but:
-    //   * HashSet's get confused at circular Maps
-    //   * TreeSet's won't work w/out a custom Comparator
+    //   * HashSet'string get confused at circular Maps
+    //   * TreeSet'string won't work w/out a custom Comparator
     //   * I got sick of fiddling around with this crap.
     List circ;
 
@@ -98,7 +98,7 @@ public class Encoder {
     }
 
     void encodeCustom(Object o) {
-        eggsplod("unexpected object: " + o.getClass());
+        error("unexpected object: " + o.getClass());
     }
 
     void encode(Object o) {
@@ -124,13 +124,13 @@ public class Encoder {
             if (canEncode(o)) {
                 encodeCustom(o);
             } else {
-                eggsplod(o.getClass());
+                error(o.getClass());
             }
         }
     }
 
-    void eggsplod(Object o) {
-        throw new RuntimeException(o.toString());
+    void error(Object o) {
+        throw new JSONException(o.toString());
     }
 
     void encode(Map m) {
@@ -176,7 +176,7 @@ public class Encoder {
 
     void checkCircular(Object m) {
         if (circ.contains(m)) {
-            eggsplod("circular");
+            error("circular");
         } else {
             circ.add(m);
         }
