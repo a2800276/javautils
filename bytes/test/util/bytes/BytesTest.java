@@ -93,7 +93,7 @@ public class BytesTest {
 		assertTrue(checkThrowsNPE(new CB() {
 			@Override
 			public void go() throws Throwable {
-				Bytes.append(null);
+				Bytes.append((byte[][]) null);
 
 			}
 		}));
