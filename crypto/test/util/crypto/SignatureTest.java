@@ -8,11 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.testng.Assert.*;
-import static util.bytes.bytes.Bytes.h2b;
+import static util.bytes.Bytes.h2b;
 
-/**
- * Created by a2800276 on 2015-11-02.
- */
 public class SignatureTest {
 
     static final byte[] rsa_message = h2b("35683c60341c30effa0dd0cc99166dbb8c09a58a4b001f6bab3992558fadc58d3a7d57f5463adf86cd0951e4e540571705d092d965c7f951de1161bc166fb8da");
@@ -186,8 +183,8 @@ public class SignatureTest {
         LinkedList<KeyPair.PublicKey> keys = loadECPublicKeys();
         for (int i = 0; i != keys.size(); ++i) {
             KeyPair.PublicKey pub = keys.get(i);
-            assertTrue(Signature.verify(Signature.Algorithm.SHA1withECDSA, pub, (ecc_signatures[i * 4 + 0]), ecc_message));
-            assertTrue(Signature.verify(Hash.Algorithm.SHA1, pub, (ecc_signatures[i * 4 + 0]), ecc_message));
+            assertTrue(Signature.verify(Signature.Algorithm.SHA1withECDSA, pub, (ecc_signatures[i * 4]), ecc_message));
+            assertTrue(Signature.verify(Hash.Algorithm.SHA1, pub, (ecc_signatures[i * 4]), ecc_message));
             assertTrue(Signature.verify(Signature.Algorithm.SHA256withECDSA, pub, (ecc_signatures[i * 4 + 1]), ecc_message));
             assertTrue(Signature.verify(Hash.Algorithm.SHA256, pub, (ecc_signatures[i * 4 + 1]), ecc_message));
             assertTrue(Signature.verify(Signature.Algorithm.SHA384withECDSA, pub, (ecc_signatures[i * 4 + 2]), ecc_message));

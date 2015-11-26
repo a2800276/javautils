@@ -3,11 +3,8 @@ package util.crypto;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
-import static util.bytes.bytes.Bytes.h2b;
+import static util.bytes.Bytes.h2b;
 
-/**
- * Created by a2800276 on 2015-10-31.
- */
 public class HMACTest {
 
     final static byte[] dd_50 = new byte[50];

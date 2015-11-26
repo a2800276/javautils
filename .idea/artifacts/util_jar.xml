@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="util:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/util_jar</output-path>
+    <root id="archive" name="util.jar">
+      <element id="module-output" name="bench" />
+      <element id="module-output" name="bytes" />
+      <element id="module-output" name="crypto" />
+      <element id="module-output" name="io" />
+      <element id="module-output" name="csv" />
+      <element id="module-output" name="flags" />
+      <element id="module-output" name="json" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/../out/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>

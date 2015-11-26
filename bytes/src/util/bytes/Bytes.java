@@ -1,4 +1,4 @@
-package util.bytes.bytes;
+package util.bytes;
 
 import java.util.Arrays;
 
@@ -9,6 +9,7 @@ public class Bytes {
     final static byte[] EMPTY = {};
     final static byte[] hex = "0123456789abcdef".getBytes();
     final static java.util.regex.Pattern WS = java.util.regex.Pattern.compile("\\s+");
+	private static java.util.Random rnd = new java.util.Random();
 
     public static String b2h(byte[] bytes) {
         return b2h(bytes, 0, bytes.length);
@@ -23,6 +24,7 @@ public class Bytes {
         }
         return new String(hexBytes);
     }
+
     /**
      * Converts the provided hex representation of bytes to a
      * byte array, ignoring any whitespace. (java regexp ws: [ \t\n\x0B\f\r]
@@ -58,12 +60,10 @@ public class Bytes {
         return (byte) i;
     }
 
-
-
     public static String b2s(byte[] bytes) {
-        StringBuffer buf = new StringBuffer();
-        for (byte b : bytes) {
-            int i = b & 0xff;
+		StringBuilder buf = new StringBuilder();
+		for (byte b : bytes) {
+			int i = b & 0xff;
             if (i >= 0x20 && i < 0x7F) {
                 buf.append((char) i);
             } else {
@@ -71,13 +71,47 @@ public class Bytes {
             }
         }
         return buf.toString();
-    }
+	}
 
-    public static void main(String[] args) {
-        p(b2s(h2b("5448884063169011D1711201158090354F")));
-    }
+	/**
+	 * Not secure randomness. Use util.crypto.Random.random
+	 *
+	 * @param count length of the array to return.
+	 */
+	public static byte[] random(int count) {
+		byte[] bs = new byte[count];
+		rnd.nextBytes(bs);
+		return bs;
+	}
 
-    public static String i2h(int i) {
+	/**
+	 * Appends all the provided byte arrays into a single array.
+	 */
+	public static byte[] append(byte[]... data) {
+		if (data == null) {
+			throw new NullPointerException();
+		}
+		int len = 0;
+		for (byte[] bs : data) {
+			if (null == bs) {
+				throw new NullPointerException();
+			}
+			len += bs.length;
+		}
+		byte[] joined = new byte[len];
+		int pos = 0;
+		for (byte[] bs : data) {
+			System.arraycopy(bs, 0, joined, pos, bs.length);
+			pos += bs.length;
+		}
+		return joined;
+	}
+
+	public static void main(String[] args) {
+		p(b2s(h2b("5448884063169011D1711201158090354F")));
+	}
+
+	public static String i2h(int i) {
         return Integer.toHexString(i);
     }
 
