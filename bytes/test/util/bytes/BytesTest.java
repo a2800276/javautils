@@ -4,6 +4,7 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+import static util.bytes.Bytes.b2h;
 import static util.bytes.Bytes.random;
 
 public class BytesTest {
@@ -70,6 +71,8 @@ public class BytesTest {
 
 	@Test
 	public void testB2h() throws Exception {
+		assertEquals(b2h(EMPTY), "");
+		assertEquals(b2h(null), "");
 		byte[] bytes = {0x01, 0x02, 0x03};
 		assertEquals(Bytes.b2h(bytes), "010203");
 		byte[] bytes2 = {(byte) 0xab, (byte) 0xcd, (byte) 0xef};

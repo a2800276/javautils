@@ -12,8 +12,9 @@ public class Bytes {
 	private static java.util.Random rnd = new java.util.Random();
 
     public static String b2h(byte[] bytes) {
-        return b2h(bytes, 0, bytes.length);
-    }
+		if (null == bytes) return "";
+		return b2h(bytes, 0, bytes.length);
+	}
 
     public static String b2h(byte[] bytes, int offset, int count) {
         byte[] hexBytes = new byte[count * 2];
@@ -124,8 +125,7 @@ public class Bytes {
 		System.arraycopy(bytes, 0, bs_one, 0, pos);
 		System.arraycopy(bytes, pos, bs_two, 0, bytes.length - pos);
 
-		byte[][] ret = {bs_one, bs_two};
-		return ret;
+		return new byte[][]{bs_one, bs_two};
 	}
 
 	public static void main(String[] args) {

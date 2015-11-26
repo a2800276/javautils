@@ -1,10 +1,13 @@
 package util.crypto;
 
 import javax.crypto.Mac;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+
+import static util.crypto.Random.random;
 
 /**
  * Utilities to generate HMACs.
@@ -18,8 +21,13 @@ import java.security.NoSuchAlgorithmException;
 public class HMAC {
 
     public static byte[] generateKey(Hash.Algorithm a) {
-        return Random.random(Hash.blockSizeBytes(a));
-    }
+		return random(a.blockSizeBytes());
+	}
+
+	public static SecretKey generateJCAKey(Hash.Algorithm a) {
+		byte[] keyBytes = generateKey(a);
+		return new SecretKeySpec(keyBytes, a.jcaHmacName());
+	}
 
     /**
      * @throws WrappedException wrapping a NoSuchAlgorithmException in the unlikely event the underlying
@@ -77,32 +85,12 @@ public class HMAC {
      *         keying material.
      */
     public static byte[] hmac(Hash.Algorithm algo, byte[] key, byte[]... data) {
-        String jca_algo;
-        switch (algo) {
-            case MD5:
-                jca_algo = "HmacMD5";
-                break;
-            case SHA1:
-                jca_algo = "HmacSHA1";
-                break;
-            case SHA256:
-                jca_algo = "HmacSHA256";
-                break;
-            case SHA384:
-                jca_algo = "HmacSHA384";
-                break;
-            case SHA512:
-                jca_algo = "HmacSHA512";
-                break;
-            default:
-                throw new IllegalArgumentException("invalid: " + algo);
-        }
         try {
-            Key k = new SecretKeySpec(key, jca_algo);
-            Mac mac = Mac.getInstance(jca_algo);
-            mac.init(k);
-            for (byte[] bytes : data) {
-                mac.update(bytes);
+			Key k = new SecretKeySpec(key, algo.jcaHmacName());
+			Mac mac = Mac.getInstance(algo.jcaHmacName());
+			mac.init(k);
+			for (byte[] bytes : data) {
+				mac.update(bytes);
             }
             return mac.doFinal();
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {

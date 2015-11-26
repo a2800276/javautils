@@ -189,7 +189,7 @@ public class HMACTest {
     @Test
     public void testGenerateKey() throws Exception {
         for (Hash.Algorithm a : Hash.Algorithm.values()) {
-            assertEquals(HMAC.generateKey(a).length, Hash.blockSizeBytes(a));
+            assertEquals(HMAC.generateKey(a).length, a.blockSizeBytes());
         }
     }
 
