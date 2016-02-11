@@ -27,41 +27,41 @@ public class KeyPairTest {
 //        pair.getPublicKey().storeX509(fos);
 //    }
 
-    @Test
-    public void testDSALong() throws Exception {
-        KeyPair pair = KeyPair.generateDSAKeyPair(Constants.DSA_DEFAULT_KEYSIZE * 2);
-        byte[] mes = {};
-        Signature.sign(Signature.Algorithm.SHA1withDSA, pair.getPrivateKey(), mes);
-    }
+	@Test
+	public void testDSALong() throws Exception {
+		KeyPair pair = KeyPair.generateDSAKeyPair(Constants.DSA_DEFAULT_KEYSIZE * 2);
+		byte[] mes = {};
+		Signature.sign(Signature.Algorithm.SHA1withDSA, pair.getPrivateKey(), mes);
+	}
 
-    @Test
-    public void smallRSAKey() throws Exception {
-        KeyPair pair = KeyPair.generateRSAKeyPair(512);
-    }
+	@Test
+	public void smallRSAKey() throws Exception {
+		KeyPair pair = KeyPair.generateRSAKeyPair(512);
+	}
 
-    @Test
-    public void testExtractPublicRSAFromPrivate() throws Exception {
-        KeyPair pair = KeyPair.generateRSAKeyPair(512);
-        assertEquals(KeyPair.getPublicKeyFromRSACRTPrivateKey((RSAPrivateCrtKey) pair.getPrivateKey().getJCAPrivateKey()), pair.getPublicKey().getJCAPublicKey());
+	@Test
+	public void testExtractPublicRSAFromPrivate() throws Exception {
+		KeyPair pair = KeyPair.generateRSAKeyPair(512);
+		assertEquals(KeyPair.getPublicKeyFromRSACRTPrivateKey((RSAPrivateCrtKey) pair.getPrivateKey().getJCAPrivateKey()), pair.getPublicKey().getJCAPublicKey());
 
-    }
+	}
 
-    @Test
-    public void testLoadPrivateKeyFromPKCS8() throws Exception {
-        KeyPair pair = KeyPair.generateKeyPair(KeyPair.Algorithm.P256);
-        byte[] pkcs8 = pair.getPrivateKey().toPKCS8();
-        ByteArrayInputStream is = new ByteArrayInputStream(pkcs8);
-        KeyPair.PrivateKey pk = KeyPair.PrivateKey.loadPKCS8(is);
-    }
+	@Test
+	public void testLoadPrivateKeyFromPKCS8() throws Exception {
+		KeyPair pair = KeyPair.generateKeyPair(KeyPair.Algorithm.P256);
+		byte[] pkcs8 = pair.getPrivateKey().toPKCS8();
+		ByteArrayInputStream is = new ByteArrayInputStream(pkcs8);
+		KeyPair.PrivateKey pk = KeyPair.PrivateKey.loadPKCS8(is);
+	}
 
-    @Test
-    public void testConstructorBytes() throws Exception {
-        KeyPair pair = KeyPair.generateKeyPair(KeyPair.Algorithm.P521);
-        KeyPair pair2 = KeyPair.generateKeyPair(KeyPair.Algorithm.P521);
-        KeyPair pair3 = new KeyPair(pair.getPrivateKey().toPKCS8(), pair.getPublicKey().toX509());
-        assertTrue(pair.equals(pair3));
-        assertTrue(pair3.equals(pair));
-        assertTrue(pair.equals(pair));
-        assertNotEquals(pair, pair2);
-    }
+	@Test
+	public void testConstructorBytes() throws Exception {
+		KeyPair pair = KeyPair.generateKeyPair(KeyPair.Algorithm.P521);
+		KeyPair pair2 = KeyPair.generateKeyPair(KeyPair.Algorithm.P521);
+		KeyPair pair3 = new KeyPair(pair.getPrivateKey().toPKCS8(), pair.getPublicKey().toX509());
+		assertTrue(pair.equals(pair3));
+		assertTrue(pair3.equals(pair));
+		assertTrue(pair.equals(pair));
+		assertNotEquals(pair, pair2);
+	}
 }

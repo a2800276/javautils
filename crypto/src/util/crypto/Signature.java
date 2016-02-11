@@ -16,52 +16,53 @@ import java.security.SignatureException;
  */
 public class Signature {
 
-    public static byte[] sign(Algorithm algorithm, KeyPair.PrivateKey pk, byte[]... data) {
-        java.security.Signature sig;
-        try {
-            sig = java.security.Signature.getInstance(algorithm.toString());
-            sig.initSign(pk.getJCAPrivateKey());
-            for (byte[] bytes : data) {
-                sig.update(bytes);
-            }
-            return sig.sign();
-        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
-            throw new RuntimeException(e);
-        }
+	public static byte[] sign(Algorithm algorithm, KeyPair.PrivateKey pk, byte[]... data) {
+		java.security.Signature sig;
+		try {
+			sig = java.security.Signature.getInstance(algorithm.toString());
+			sig.initSign(pk.getJCAPrivateKey());
+			for (byte[] bytes : data) {
+				sig.update(bytes);
+			}
+			return sig.sign();
+		} catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
+			throw new RuntimeException(e);
+		}
 
-    }
+	}
 
-    public static byte[] sign(Hash.Algorithm algorithm, KeyPair.PrivateKey pk, byte[]... data) {
-        return sign(pk.getSignatureAlgorithm(algorithm), pk, data);
-    }
+	public static byte[] sign(Hash.Algorithm algorithm, KeyPair.PrivateKey pk, byte[]... data) {
+		return sign(pk.getSignatureAlgorithm(algorithm), pk, data);
+	}
 
-    public static boolean verify(Algorithm algorithm, KeyPair.PublicKey pub, byte[] signature, byte[]... data) {
-        java.security.Signature sig;
-        try {
-            sig = java.security.Signature.getInstance(algorithm.toString());
-            sig.initVerify(pub.getJCAPublicKey());
-            for (byte[] bytes : data) {
-                sig.update(bytes);
-            }
-            return sig.verify(signature);
-        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	public static boolean verify(Algorithm algorithm, KeyPair.PublicKey pub, byte[] signature, byte[]... data) {
+		java.security.Signature sig;
+		try {
+			sig = java.security.Signature.getInstance(algorithm.toString());
+			sig.initVerify(pub.getJCAPublicKey());
+			for (byte[] bytes : data) {
+				sig.update(bytes);
+			}
+			return sig.verify(signature);
+		} catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    public static boolean verify(Hash.Algorithm algorithm, KeyPair.PublicKey pub, byte[] signature, byte[]... data) {
-        return verify(pub.getSignatureAlgorithm(algorithm), pub, signature, data);
-    }
-    public enum Algorithm {
-        SHA1withDSA,
-        SHA1withRSA,
-        SHA256withRSA,
-        NONEwithECDSA,
-        SHA1withECDSA,
-        SHA256withECDSA,
-        SHA384withECDSA,
-        SHA512withECDSA
-    }
+	public static boolean verify(Hash.Algorithm algorithm, KeyPair.PublicKey pub, byte[] signature, byte[]... data) {
+		return verify(pub.getSignatureAlgorithm(algorithm), pub, signature, data);
+	}
+
+	public enum Algorithm {
+		SHA1withDSA,
+		SHA1withRSA,
+		SHA256withRSA,
+		NONEwithECDSA,
+		SHA1withECDSA,
+		SHA256withECDSA,
+		SHA384withECDSA,
+		SHA512withECDSA
+	}
 
 
 }

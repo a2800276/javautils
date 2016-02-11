@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
  * Created by a2800276 on 2015-10-30.
  */
 public class Hash {
-    /**
+	/**
 	 * MD5
 	 *
 	 * @param data input to the digest function
@@ -18,7 +18,7 @@ public class Hash {
 		return hash(Algorithm.MD5, data);
 	}
 
-    /**
+	/**
 	 * SHA1
 	 *
 	 * @param data input to the digest function
@@ -28,7 +28,7 @@ public class Hash {
 		return hash(Algorithm.SHA1, data);
 	}
 
-    /**
+	/**
 	 * SHA256
 	 *
 	 * @throws WrappedException if underlying JCA does not provide SHA256
@@ -37,8 +37,9 @@ public class Hash {
 		return hash(Algorithm.SHA256, data);
 	}
 
-    /**
+	/**
 	 * SHA384
+	 *
 	 * @param data input to the digest function
 	 * @throws WrappedException if underlying JCA does not provide SHA384
 	 */
@@ -46,8 +47,9 @@ public class Hash {
 		return hash(Algorithm.SHA384, data);
 	}
 
-    /**
+	/**
 	 * SHA512
+	 *
 	 * @param data input to the digest function
 	 * @throws WrappedException if underlying JCA does not provide SHA512
 	 */
@@ -55,27 +57,27 @@ public class Hash {
 		return hash(Algorithm.SHA512, data);
 	}
 
-    /**
-     * Calculate hash of data using the named Algorithm. Preferably, use the
-     * named functions for the intended algorithm. This method may become relevant in future
-     * in case `exotic` algorithms like SHA3 become available on some plattforms but no
-     * everywhere. (This method could then be used to access `unsafe` algorithms.
-     *
+	/**
+	 * Calculate hash of data using the named Algorithm. Preferably, use the
+	 * named functions for the intended algorithm. This method may become relevant in future
+	 * in case `exotic` algorithms like SHA3 become available on some plattforms but no
+	 * everywhere. (This method could then be used to access `unsafe` algorithms.
+	 *
 	 * @param algorithm the hash algorithm to call.
-	 * @param data input
+	 * @param data      input
 	 * @return the calculated digest
 	 */
 	public static byte[] hash(Algorithm algorithm, byte[]... data) {
-        try {
+		try {
 			MessageDigest digest = MessageDigest.getInstance(algorithm.jcaName());
 			for (byte[] bytes : data) {
 				digest.update(bytes);
 			}
 			return digest.digest();
-        } catch (NoSuchAlgorithmException e) {
-            throw new WrappedException(e);
-        }
-    }
+		} catch (NoSuchAlgorithmException e) {
+			throw new WrappedException(e);
+		}
+	}
 
 	/**
 	 * Supported Hash Algorithms, notably absent is SHA3 ...

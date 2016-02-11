@@ -19,6 +19,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="io" />
-    <orderEntry type="module" module-name="bytes" scope="TEST" />
+    <orderEntry type="module" module-name="bytes" />
   </component>
 </module>

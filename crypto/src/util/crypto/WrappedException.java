@@ -14,15 +14,15 @@ package util.crypto;
  * Created by a2800276 on 2015-11-15.
  */
 public class WrappedException extends RuntimeException {
-    public WrappedException(String message) {
-        super(message);
-    }
+	public WrappedException(String message) {
+		super(message);
+	}
 
-//    public WrappedException(String message, Throwable cause) {
-//        super(message, cause);
-//    }
+	public WrappedException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    public WrappedException(Throwable cause) {
-        super(cause);
-    }
+	public WrappedException(Throwable cause) {
+		super(cause);
+	}
 }
