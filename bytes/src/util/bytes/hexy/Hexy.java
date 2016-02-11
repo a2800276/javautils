@@ -20,9 +20,17 @@ public class Hexy {
     }
 
     public Hexy(byte[] bytes, Hexy.Config cfg) {
-        this.bytes = bytes == null ? EMPTY : bytes;
-        this.cfg = cfg;
-    }
+		this(cfg);
+		this.bytes = bytes == null ? EMPTY : bytes;
+	}
+
+	public Hexy() {
+		this(new Config());
+	}
+
+	public Hexy(Hexy.Config cfg) {
+		this.cfg = cfg;
+	}
 
     public static String toString(byte[] bytes) {
         return new Hexy(bytes).toString();
@@ -30,13 +38,12 @@ public class Hexy {
 
     public static String toHex(byte b, boolean upper) {
         char[] map = upper ? Hexy.HEX : Hexy.hex;
-        StringBuilder builder = new StringBuilder();
+		char[] strChars = new char[2];
+		strChars[0] = map[(b & 0xF0) >> 4];
+		strChars[1] = map[(b & 0xF0)];
 
-        builder.append(map[(b & 0xF0) >> 4]);
-        builder.append(map[b & 0x0F]);
-
-        return builder.toString();
-    }
+		return new String(strChars);
+	}
 
     public static String toHex(byte[] bs, boolean upper) {
         char[] map = upper ? Hexy.HEX : Hexy.hex;
@@ -82,32 +89,6 @@ public class Hexy {
 
     }
 
-    public static void main(String[] args) {
-        byte[] bytes = "12345678901234567890".getBytes();
-        Hexy h = new Hexy(bytes);
-        p(h);
-        Hexy.Config cfg = new Hexy.Config();
-        cfg.format = Format.FOURS;
-        cfg.numbering = Numbering.HEX_BYTES;
-        h = new Hexy(bytes, cfg);
-        p(h);
-
-        byte[] bs = {(byte) -255, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0x30, 0x31, 0x32, 0x33, 0x39, 0x40, 0x41};
-        h = new Hexy(bs);
-        p(h);
-
-        cfg.prefix = "bumsi!";
-        cfg.indent = 5;
-        h = new Hexy(bs, cfg);
-        p(h);
-
-        p(Hexy.toString(""));
-        p(Hexy.toString("1"));
-
-        for (int i = 0; i != 256; ++i) {
-            //p(toHex( (byte)i, false));
-        }
-    }
 
     static void p(Object o) {
         System.out.println(o);
@@ -116,83 +97,95 @@ public class Hexy {
     private String getIndent() {
         if (null == this.indent) {
             StringBuilder b = new StringBuilder();
-            b.append(this.cfg.prefix);
-
             for (int i = 0; i != this.cfg.indent; ++i) {
                 b.append(" ");
             }
-            this.indent = b.toString();
-        }
-        return this.indent;
+			b.append(this.cfg.prefix);
+			this.indent = b.toString();
+		}
+		return this.indent;
     }
 
-    public String getString() {
-        StringBuilder builder = new StringBuilder();
-        String tmp = null;
-        for (int i = 0; i < this.bytes.length; i += this.cfg.width) {
-            byte[] bs = get(this.bytes, i, this.cfg.width);
+	public String hexDump(byte[] bytes) {
+		return getString(bytes);
+	}
 
-            builder.append(getIndent());
-            if (Numbering.HEX_BYTES == this.cfg.numbering) {
-                builder.append(String.format("%07X: ", i));
-            }
-            if (Format.FOURS == this.cfg.format) {
-                for (int j = 0; j < this.cfg.width; j += 2) {
-                    byte[] printb = get(bs, j, 2);
-                    tmp = toHex(printb, this.cfg.upper);
-                    if (4 != tmp.length()) {
-                        tmp += "  ";
-                    }
-                    if (4 != tmp.length()) {
-                        tmp += "  ";
-                    }
-                    builder.append(tmp);
-                    builder.append(" ");
-                    //if (j+2 == this.cfg.width/2) {
-                    //  builder.append(" ");
-                    //}
-                }
-            } else {
-                for (int j = 0; j != this.cfg.width; ++j) {
-                    byte[] printb = get(bs, j, 1);
-                    tmp = toHex(printb, this.cfg.upper);
-                    if (2 != tmp.length()) {
-                        tmp += "  ";
-                    }
-                    builder.append(tmp);
-                    builder.append(" ");
-                    if (j + 1 == this.cfg.width / 2) {
-                        builder.append(" ");
-                    }
-                }
-            }
-            if (Annotate.ASCII == this.cfg.annotate) {
-                builder.append(" ");
-                for (int j = 0; j != this.cfg.width; ++j) {
-                    if (j == bs.length) {
-                        break;
-                    }
-                    char b = (char) bs[j];
-                    if (0x7f > b && 0x19 < b) {
-                        builder.append(b);
-                    } else {
-                        builder.append('.');
-                    }
-                }
-            }
-            builder.append("\n");
-        }
-        return builder.toString();
-    }
+	/**
+	 * @deprecated
+	 */
+	public String getString(byte[] bytes) {
+		bytes = bytes == null ? EMPTY : bytes;
+		StringBuilder builder = new StringBuilder();
+		String tmp = null;
+		for (int i = 0; i < bytes.length; i += this.cfg.width) {
+			byte[] bs = get(bytes, i, this.cfg.width);
+			builder.append(getIndent());
+			if (Numbering.HEX_BYTES == this.cfg.numbering) {
+				builder.append(String.format("%07X: ", i));
+			} else if (Numbering.BASE_10 == this.cfg.numbering) {
+				builder.append(String.format("%07d: ", i));
+			}
+			if (Format.FOURS == this.cfg.format) {
+				for (int j = 0; j < this.cfg.width; j += 2) {
+					byte[] printb = get(bs, j, 2);
+					tmp = toHex(printb, this.cfg.upper);
+					while (4 != tmp.length()) {
+						tmp += "  ";
+					}
+					builder.append(tmp);
+					builder.append(" ");
+				}
+			} else {
+				for (int j = 0; j != this.cfg.width; ++j) {
+					byte[] printb = get(bs, j, 1);
+					tmp = toHex(printb, this.cfg.upper);
+					if (2 != tmp.length()) {
+						tmp += "  ";
+					}
+					builder.append(tmp);
+					if (Format.TWOS == this.cfg.format) {
+						builder.append(" ");
+						if (j + 1 == this.cfg.width / 2) {
+							builder.append(" ");
+						}
+					}
+				}
+			}
+			if (Annotate.ASCII == this.cfg.annotate) {
+				builder.append(" ");
+				for (int j = 0; j != this.cfg.width; ++j) {
+					if (j == bs.length) {
+						break;
+					}
+					char b = (char) bs[j];
+					if (0x7f > b && 0x19 < b) {
+						builder.append(b);
+					} else {
+						builder.append('.');
+					}
+				}
+			}
+			builder.append("\n");
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public String getString() {
+		return getString(this.bytes);
+	}
 
     public String toString() {
         return this.getString();
     }
 
     public enum Numbering {
-        NONE,
-        HEX_BYTES
-    }
+		NONE,
+		HEX_BYTES,
+		BASE_10
+	}
 
     public enum Format {
         NONE,
