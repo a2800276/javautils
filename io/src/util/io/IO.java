@@ -147,6 +147,39 @@ public class IO {
 	}
 
 	/**
+	 * Write `bs` to file name `fn`
+	 * @param bs
+	 * @param fn
+	 */
+	public static void writeAll(byte[] bs, String fn) {
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(fn);
+			writeAll(bs, fos);
+		} catch (FileNotFoundException e) {
+			throw new WrappedException(e);
+		} finally {
+			close(fos);
+		}
+	}
+
+	/**
+	 * Write `bs` and close stream
+	 *
+	 * @param bs
+	 * @param os
+	 */
+	public static void writeAll(byte[] bs, OutputStream os) {
+		try {
+			os.write(bs);
+		} catch (IOException e) {
+			throw new WrappedException(e);
+		} finally {
+			close(os);
+		}
+	}
+
+	/**
 	 * Utility to avoid all the stupid hassle of catching IOExceptions
 	 * when calling stream.close, checks for null and throws away any
 	 * IOException it encounters. In case you're Closeable also throws
@@ -224,7 +257,7 @@ public class IO {
 	 * return. Also it's dependant on the plattform you're running
 	 * on (File.seperator) so it's basically nondeterministic.
 	 * <p/>
-	 * Also, I'm no longer sure what grips I had with Java's getPath...
+	 * Also, I'm no longer sure what gripes I had with Java's getPath...
 	 * <p/>
 	 * Returns null if passed null.
 	 */
