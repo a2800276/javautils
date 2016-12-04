@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="util:source:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/util_source_jar</output-path>
+    <root id="archive" name="util_source_jar.jar">
+      <element id="dir-copy" path="$PROJECT_DIR$/bench/src" />
+      <element id="dir-copy" path="$PROJECT_DIR$/bytes/src" />
+      <element id="dir-copy" path="$PROJECT_DIR$/crypto/src" />
+      <element id="dir-copy" path="$PROJECT_DIR$/csv/src" />
+      <element id="dir-copy" path="$PROJECT_DIR$/flags/src" />
+      <element id="dir-copy" path="$PROJECT_DIR$/io/src" />
+      <element id="dir-copy" path="$PROJECT_DIR$/json/src" />
+    </root>
+  </artifact>
+</component>
