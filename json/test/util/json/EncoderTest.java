@@ -36,8 +36,9 @@ public class EncoderTest {
         assertTrue(m.containsKey("b"));
         assertTrue(m.containsKey("dindong"));
 
+        assertEquals( m.keySet().size(), 3 );
 
-        p("should look the same");
+        p("should look the same (equality is checked in code.)");
         p(json);
         p(JSON.jsonify(m));
 

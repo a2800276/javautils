@@ -1,7 +1,7 @@
 # javautils
 grabbag of Java stuff to make life less miserable.
 
-##m Repo & Dev
+## Repo & Dev
 
 This is currently a bunch of IntelliJ projects. No Maven, Ant, etc. Sorry.
 
