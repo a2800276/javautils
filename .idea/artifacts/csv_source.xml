@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="csv:source">
+    <output-path>$PROJECT_DIR$/out/artifacts/csv_source</output-path>
+    <root id="archive" name="csv_source.jar">
+      <element id="dir-copy" path="$PROJECT_DIR$/csv/src" />
+    </root>
+  </artifact>
+</component>

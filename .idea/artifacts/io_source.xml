@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="io:source">
+    <output-path>$PROJECT_DIR$/out/artifacts/io_source</output-path>
+    <root id="archive" name="io_source.jar">
+      <element id="dir-copy" path="$PROJECT_DIR$/io/src" />
+    </root>
+  </artifact>
+</component>

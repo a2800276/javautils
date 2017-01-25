@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="flags:source">
+    <output-path>$PROJECT_DIR$/out/artifacts/flags_source</output-path>
+    <root id="archive" name="flags_source.jar">
+      <element id="dir-copy" path="$PROJECT_DIR$/flags/src" />
+    </root>
+  </artifact>
+</component>

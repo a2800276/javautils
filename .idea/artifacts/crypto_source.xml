@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="crypto:source">
+    <output-path>$PROJECT_DIR$/out/artifacts/crypto_source</output-path>
+    <root id="archive" name="crypto_source.jar">
+      <element id="dir-copy" path="$PROJECT_DIR$/crypto/src" />
+    </root>
+  </artifact>
+</component>

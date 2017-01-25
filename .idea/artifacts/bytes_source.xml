@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="bytes:source">
+    <output-path>$PROJECT_DIR$/out/artifacts/bytes_source</output-path>
+    <root id="archive" name="bytes_source.jar">
+      <element id="dir-copy" path="$PROJECT_DIR$/bytes/src" />
+    </root>
+  </artifact>
+</component>

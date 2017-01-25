@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="flags:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/flags_jar</output-path>
+    <root id="archive" name="flags.jar">
+      <element id="module-output" name="flags" />
+    </root>
+  </artifact>
+</component>
