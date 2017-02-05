@@ -1,0 +1,216 @@
+[
+  {
+     "groupId"            : "de.kuriositaet"
+    ,"artifactId"         : "utils"
+    ,"version"            : "0.2.0"
+    ,"projectName"        : "utils"
+    ,"description"        : "collection of utilities to facilitate working with java"
+    ,"url"                : "https://github.com/a2800276/javautils/"
+    ,"licenseName"        : "MIT"
+    ,"licenseURL"         : "https://opensource.org/licenses/MIT"
+    ,"scmURL"             : "https://github.com/a2800276/javautils.git"
+    ,"developerName"      : "Tim Becker"
+    ,"developerEmail"     : "tim@kuriositaet.de"
+    ,"developerURL"       : "http://www.kuriositaet.de"
+    ,"developerId"        : "a2800276"
+    ,"dependencies"        : []
+
+    ,"sources"            : [
+       "./bench/src"
+      ,"./bytes/src"
+      ,"./crypto/src"
+      ,"./csv/src"
+      ,"./flags/src"
+      ,"./io/src"
+      ,"./json/src"
+    ]
+    ,"classes"            : [
+       "out/production/bench"
+      ,"out/production/bytes"
+      ,"out/production/crypto"
+      ,"out/production/csv"
+      ,"out/production/flags"
+      ,"out/production/io"
+      ,"out/production/json"
+    ]
+    ,"output"             : "artifacts"
+
+  }
+  , {
+     "groupId"            : "de.kuriositaet"
+    ,"artifactId"         : "bench"
+    ,"version"            : "0.2.0"
+    ,"projectName"        : "bench"
+    ,"description"        : "simple benchmark utility modeled after GO's benchmarks (https://golang.org/pkg/testing/#hdr-Benchmarks)"
+    ,"url"                : "https://github.com/a2800276/javautils/tree/master/bench"
+    ,"licenseName"        : "MIT"
+    ,"licenseURL"         : "https://opensource.org/licenses/MIT"
+    ,"scmURL"             : "https://github.com/a2800276/javautils.git"
+    ,"developerName"      : "Tim Becker"
+    ,"developerEmail"     : "tim@kuriositaet.de"
+    ,"developerURL"       : "http://www.kuriositaet.de"
+    ,"developerId"        : "a2800276"
+    ,"dependencies"        : []
+
+    ,"sources"            : [
+       "./bench/src"
+    ]
+    ,"classes"            : [
+       "out/production/bench"
+    ]
+    ,"output"             : "artifacts"
+  }
+  ,{
+     "groupId"            : "de.kuriositaet"
+    ,"artifactId"         : "bytes"
+    ,"version"            : "0.2.0"
+    ,"projectName"        : "bytes"
+    ,"description"        : "utilities to facilitate dealing with bytes and byte arrays, list structures, hex, base64 de- and encoding"
+    ,"url"                : "https://github.com/a2800276/javautils/"
+    ,"licenseName"        : "MIT"
+    ,"licenseURL"         : "https://opensource.org/licenses/MIT"
+    ,"scmURL"             : "https://github.com/a2800276/javautils.git"
+    ,"developerName"      : "Tim Becker"
+    ,"developerEmail"     : "tim@kuriositaet.de"
+    ,"developerURL"       : "http://www.kuriositaet.de"
+    ,"developerId"        : "a2800276"
+    ,"dependencies"        : []
+
+    ,"sources"            : [
+      "./bytes/src"
+    ]
+    ,"classes"            : [
+      "out/production/bytes"
+    ]
+    ,"output"             : "artifacts"
+  }
+  , {
+     "groupId"            : "de.kuriositaet"
+    ,"artifactId"         : "crypto"
+    ,"version"            : "0.2.0"
+    ,"projectName"        : "crypto"
+    ,"description"        : "utilities to abstract away JCA annoyances, easy exceptionless access to common primitives"
+    ,"url"                : "https://github.com/a2800276/javautils/tree/master/crypto"
+    ,"licenseName"        : "MIT"
+    ,"licenseURL"         : "https://opensource.org/licenses/MIT"
+    ,"scmURL"             : "https://github.com/a2800276/javautils.git"
+    ,"developerName"      : "Tim Becker"
+    ,"developerEmail"     : "tim@kuriositaet.de"
+    ,"developerURL"       : "http://www.kuriositaet.de"
+    ,"developerId"        : "a2800276"
+    ,"dependencies"        : [
+       {
+          "groupId"    : "de.kuriositaet"
+         ,"artifactId" : "io"
+         ,"version"    : "[0.2.0,)"
+       }
+    ]
+
+    ,"sources"            : [
+      "./crypto/src"
+    ]
+    ,"classes"            : [
+      "out/production/crypto"
+    ]
+    ,"output"             : "artifacts"
+
+  }
+  ,{
+     "groupId"            : "de.kuriositaet"
+    ,"artifactId"         : "csv"
+    ,"version"            : "0.2.0"
+    ,"projectName"        : "csv"
+    ,"description"        : "utilities to easily deconstruct csv files"
+    ,"url"                : "https://github.com/a2800276/javautils/tree/master/csv"
+    ,"licenseName"        : "MIT"
+    ,"licenseURL"         : "https://opensource.org/licenses/MIT"
+    ,"scmURL"             : "https://github.com/a2800276/javautils.git"
+    ,"developerName"      : "Tim Becker"
+    ,"developerEmail"     : "tim@kuriositaet.de"
+    ,"developerURL"       : "http://www.kuriositaet.de"
+    ,"developerId"        : "a2800276"
+    ,"dependencies"       : []
+
+    ,"sources"            : [
+      "./csv/src"
+    ]
+    ,"classes"            : [
+      "out/production/csv"
+    ]
+    ,"output"             : "artifacts"
+
+  }
+  ,{
+     "groupId"            : "de.kuriositaet"
+    ,"artifactId"         : "flags"
+    ,"version"            : "0.2.0"
+    ,"projectName"        : "flags"
+    ,"description"        : "command line flags handling"
+    ,"url"                : "https://github.com/a2800276/javautils/tree/master/flags"
+    ,"licenseName"        : "MIT"
+    ,"licenseURL"         : "https://opensource.org/licenses/MIT"
+    ,"scmURL"             : "https://github.com/a2800276/javautils.git"
+    ,"developerName"      : "Tim Becker"
+    ,"developerEmail"     : "tim@kuriositaet.de"
+    ,"developerURL"       : "http://www.kuriositaet.de"
+    ,"developerId"        : "a2800276"
+    ,"dependencies"       : []
+
+    ,"sources"            : [
+      "./flags/src"
+    ]
+    ,"classes"            : [
+      "out/production/flags"
+    ]
+    ,"output"             : "artifacts"
+  }
+  ,{
+     "groupId"            : "de.kuriositaet"
+    ,"artifactId"         : "io"
+    ,"version"            : "0.2.0"
+    ,"projectName"        : "io"
+    ,"description"        : "quick and dirty io annoyance reduction"
+    ,"url"                : "https://github.com/a2800276/javautils/tree/master/io"
+    ,"licenseName"        : "MIT"
+    ,"licenseURL"         : "https://opensource.org/licenses/MIT"
+    ,"scmURL"             : "https://github.com/a2800276/javautils.git"
+    ,"developerName"      : "Tim Becker"
+    ,"developerEmail"     : "tim@kuriositaet.de"
+    ,"developerURL"       : "http://www.kuriositaet.de"
+    ,"developerId"        : "a2800276"
+    ,"dependencies"       : []
+
+    ,"sources"            : [
+      "./io/src"
+    ]
+    ,"classes"            : [
+      "out/production/io"
+    ]
+    ,"output"             : "artifacts"
+
+  }
+  , {
+     "groupId"            : "de.kuriositaet"
+    ,"artifactId"         : "json"
+    ,"version"            : "0.2.0"
+    ,"projectName"        : "json"
+    ,"description"        : "simple fast and low resource statemachine based JSON decoding (and encoding)"
+    ,"url"                : "https://github.com/a2800276/javautils/tree/master/json"
+    ,"licenseName"        : "MIT"
+    ,"licenseURL"         : "https://opensource.org/licenses/MIT"
+    ,"scmURL"             : "https://github.com/a2800276/javautils.git"
+    ,"developerName"      : "Tim Becker"
+    ,"developerEmail"     : "tim@kuriositaet.de"
+    ,"developerURL"       : "http://www.kuriositaet.de"
+    ,"developerId"        : "a2800276"
+    ,"dependencies"       : []
+
+    ,"sources"            : [
+      "./json/src"
+    ]
+    ,"classes"            : [
+      "out/production/json"
+    ]
+    ,"output"             : "artifacts"
+  }
+]
