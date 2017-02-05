@@ -16,6 +16,10 @@ import java.util.*;
  * JSON Strings become Java Strings, Numbers become `BigDecimal`, `true`
  * and `false` are boolean and null is, well, null.
  * <p>
+ *   	Numbers may be configured to be something else, i.e. int, long,
+ *   	float or double. This is done by passing the constructor a corresponding
+ *      `NumberType` enum value.
+ * <p>
  * <h2> Usage </h2> 
  * <p>
  * <code>
@@ -37,8 +41,8 @@ import java.util.*;
  * <code>
  * JSON json = new JSON();
  * while (arr = bytesAvailableFromSomewhere()) {
- * j.parse(arr);
- * if (json.done()) break;
+ *   j.parse(arr);
+ *   if (json.done()) break;
  * }
  * Object result = json.obj();
  * </code>
@@ -64,20 +68,46 @@ import java.util.*;
  */
 public class JSON {
 
-    LexerCB cb = new LexerCB();
+
+	public enum NumberType {
+    	 BigDecimal // default
+		,Integer
+		,Long
+		,Float
+		,Double
+	}
+
+    LexerCB cb;
     Object obj; // result.
+
+	public JSON () {
+		this(NumberType.BigDecimal);
+	}
+	public JSON (NumberType type) {
+		this.cb = new LexerCB(type);
+	}
 
     /**
      * Utility method to parse a String containing valid JSON
      */
     public static Object parse(String json) {
-        LexerCB cb = new LexerCB();
-        Lexer.lexer.lex(json.getBytes(), cb);
-        return cb.stack.pop();
+    	return parse(json, NumberType.BigDecimal);
     }
 
-    /**
-     * Mungle up an Object into JSON. There are a bunch of
+	/**
+	 * Utility method to parse a String containing valid JSON returning
+	 * a mapped object with the indicated number type, it is up to the
+	 * caller to ensure that her numbers don't overflow and, e.g. don't
+	 * contain decimal points for int's
+	 */
+	public static Object parse(String json, NumberType type) {
+		LexerCB cb = new LexerCB(type);
+		Lexer.lexer.lex(json.getBytes(), cb);
+		return cb.stack.pop();
+	}
+
+	/**
+     * Munge up an Object into JSON. There are a bunch of
      * cases this can't handle, for example: just any old stuff.
      * <p>
      * Object passed to this method needs to be:
@@ -101,18 +131,32 @@ public class JSON {
         //
         // The best way to go would be some sort of `unknown class Handler`
         // to stuff into the encoder to roll your own strategy for dealing
-        // with this...
+        // with this... `CustomEncoder` attempts this.
         //
         // I have yet to decide an will do so when I need to.
     }
 
-    public static String jsonifyDynamic(Object o) {
+	/** Use "dynamic" encoding, which is just a term I made up. It means
+	 * that Objects that can't be encoded using the default encoding rules
+	 * BUT have a `toJSON` method will be encoded using said `toJSON` method.
+	 * @param o the object to encode
+	 * @return a JSON string
+	 */
+	public static String jsonifyDynamic(Object o) {
         Encoder e = new DynamicEncoder();
         e.encode(o);
         return e.buf.toString();
     }
 
-    public static String jsonifyCustom(Object o, CustomEncoder enc) {
+	/**
+	 * If you want to get super fancy you can write a custom encoder that
+	 * really know the classes you want to encode. See the documentation
+	 * for `CustomEncoder`, i.e. the source code.
+	 * @param o the object to encode
+	 * @param enc
+	 * @return
+	 */
+	public static String jsonifyCustom(Object o, CustomEncoder enc) {
         enc.encode(o);
         return enc.buf.toString();
     }
@@ -129,13 +173,20 @@ public class JSON {
     }
 
     /**
-     * Returns whether the parser is in a consistant, balanced state.
+     * Returns whether the parser is in a consistent, balanced state.
      * Once the parser is `done` passing further data to it via `parse`
      * will trigger an Exception.
      */
     public boolean done() {
         return this.cb.done;
     }
+
+	/**
+	 * reset the parser to reuse the instance once a complete JSON object has been parsed.
+	 * */
+	public void reset() {
+		cb.reset();
+	}
 
     /**
      * Retrieve the results of the parse. You need to ensure that the
@@ -154,9 +205,23 @@ public class JSON {
     }
 
     public static class LexerCB extends Lexer.CB {
+
+    	public LexerCB (NumberType type) {
+    		this.type = type;
+		}
+		public LexerCB() {
+    		this(NumberType.BigDecimal);
+		}
+		public void reset() {
+    		super.reset();
+    		this.stack = new Stack();
+    		this.done = false;
+    		this.expectNextCommaOrRCurly = false;
+		}
         Stack<Object> stack = new Stack<Object>();
         boolean done;
         boolean expectNextCommaOrRCurly;
+		NumberType type;
 
         void tok(Lexer.Token t) {
 
@@ -229,9 +294,29 @@ public class JSON {
             }
         }
 
-        void tok(BigDecimal d) {
-            stash(d);
-        }
+        void numberToken (CharSequence cs) {
+			Object o;
+        	switch (type) {
+				case BigDecimal:
+					o = new BigDecimal(cs.toString());
+					break;
+				case Double:
+					o = Double.parseDouble( cs.toString() );
+					break;
+				case Float:
+					o = Float.parseFloat( cs.toString() );
+					break;
+				case Integer:
+					o = Integer.parseInt( cs.toString(), 10 );
+					break;
+				case Long:
+					o = Long.parseLong( cs.toString(), 10 );
+					break;
+				default:
+					throw new JSONException( "cannot happen: unknown number type" );
+			}
+			stash(o);
+		}
 
         void stash(Object o) {
             // stack is empty, done
@@ -263,7 +348,7 @@ public class JSON {
         }
 
         void error() {
-            error("?");
+            error("calling parser in done state. did you forget to call reset()?");
         }
 
         void error(String m) {

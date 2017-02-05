@@ -1,30 +1,31 @@
 package util.json;
 
+import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 public class JSONTest {
-
-    static void testInvalid() {
+    @Test(expectedExceptions = JSONException.class)
+    public static void testInvalid() {
         String json = "{{\"a\":19560954609845.4456456}:1,\"b\":[1,2,3],\"dindong\":{\"b\":12}}";
-        try {
-            Object o = JSON.parse(json);
-            p("failed: JSON-Obj as key should cause exception");
-        } catch (Throwable t) {
-            p("failed as expected: \n\t" + t.getMessage());
-        }
-
+        Object o = JSON.parse(json);
     }
 
-    static void testNoComma() {
+    @Test(expectedExceptions = JSONException.class)
+    public static void testNoComma() {
         // too liberal behaviour, key value don't need to be separated by comma
         String json = "{\"a\" 19560954609845.4456456 \"b\" [1 2 3] \"dindong\" {\"b\" 12}}";
-        try {
-            JSON.parse(json);
-            p("testNoComma failed, but arguably ok");
-        } catch (RuntimeException t) {
-            p("expected falure: " + t.getMessage());
-        }
+        JSON.parse(json);
     }
-
-    static void testState() {
+	@Test(expectedExceptions = NumberFormatException.class)
+	public static void testInvalidFloat() {
+		String json = "{\"a\":19560954.609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}}";
+		JSON.parse(json);
+	}
+    @Test
+    public static void testState() {
         String json = "{\"a\":19560954609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}}";
 
         JSON j = new JSON();
@@ -38,37 +39,50 @@ public class JSONTest {
         }
 
         Object o1 = JSON.parse(json);
-        if (!o1.equals(j.obj())) {
-            p("testState failed");
-        }
-
+        assertEquals(o1, j.obj());
     }
-
-    static void testRndFail() {
+	@Test
+    public static void testRndFail() {
         String json = "{\"key\":\"value\":\"value\"}";
         try {
             JSON.parse(json);
-            p("testRndFail missed incorrect COLON");
-        } catch (RuntimeException e) {
-
+            fail("testRndFail missed incorrect COLON");
+        } catch (JSONException e) {
+			assertTrue( true );
         }
         json = "[,,,]";
         try {
             JSON.parse(json);
-            p("testRndFail missed incorrect COMMA");
-        } catch (RuntimeException e) {
+            fail("testRndFail missed incorrect COMMA");
+        } catch (JSONException e) {
+        	assertTrue( true );
         }
 
-        json = "{ \"toll\" : \"toll\" }\n";
-        JSON.parse(json);
     }
 
-    public static void main(String[] args) {
-        testInvalid();
-        testNoComma();
-        testState();
-        testRndFail();
-    }
+    @Test(expectedExceptions = JSONException.class)
+	public static void testReuse() {
+		byte[] bs = "{\"a\":19560954609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}}".getBytes();
+		JSON json = new JSON(  );
+		json.parse( bs );
+		json.parse( bs );
+
+	}
+	@Test
+	public static void testReuseReset() {
+		byte[] bs = "{\"a\":19560954609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}}".getBytes();
+		JSON json = new JSON(  );
+		json.parse( bs );
+		json.reset();
+		json.parse( bs );
+
+	}
+//    public static void main(String[] args) {
+//        testInvalid();
+//        testNoComma();
+//        testState();
+//        testRndFail();
+//    }
 
     static void p(Object o) {
         System.out.println(o);

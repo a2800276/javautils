@@ -1,13 +1,33 @@
 package util.json;
 
-import java.math.BigDecimal;
-
+/**
+ * Fairly straightforward Lexer for JSON.
+ * You should need this. In case you feel that you do, please consult the
+ * source.
+ */
 public class Lexer {
-    public static Lexer lexer = new Lexer();
+	/**
+	 * You shouldn't ever need more than a single instance of Lexer,
+	 * because the Lexer state is maintained in your implementation of CB.
+	 * <p>
+	 * So here's a prepared instance to avoid having to create garbage.
+	 * <p>
+	 * I'm not enforcing the use of a single instance because:
+	 * <p>
+	 * * who am I to judge whether you need more instances?
+	 * * the way java handles static is fairly retarded for non-trivial cases
+	 * * I think singletons are overrated.
+	 *
+	 * Visiting this again after some time leaves me unconvinced that
+	 * that the `lex` methods shouldn't be static. So this may change in the
+	 * future. Perhaps I will benchmark.
+	 */
 
-    public void lex(byte[] arr, CB cb) {
-        lex(arr, 0, arr.length, cb);
-    }
+	public static Lexer lexer = new Lexer();
+
+	public void lex(byte[] arr, CB cb) {
+		lex( arr, 0, arr.length, cb );
+	}
 
     public void lex(byte[] arr, int off, int len, CB cb) {
         for (int i = off, end = off + len; i != end; ++i, ++cb.pos) {
@@ -193,7 +213,7 @@ public class Lexer {
                             cb.cache.append((char) c);
                             continue;
                         default:
-                            cb.tok(num(cb.cache));
+                            cb.numberToken( cb.cache );
                             --i;
                             --cb.pos;
                             cb.state = State.AFTER_VALUE;
@@ -286,35 +306,19 @@ public class Lexer {
         }// for
     }
 
-    // You shouldn't ever need more than a single instance of Lexer,
-    // because the Lexer state is maintained in your implementation of CB.
-    //
-    // So here'string a  prepared instance to avoid having to create garbage.
-    //
-    // I'm not enforcing the use of a single instance because:
-    //
-    // * who am I to judge whether you need more instances?
-    // * the way java handles static is fairly retarded for non-trivial cases
-    // * I think singletons are overrated.
+
 
     boolean isWS(byte c) {
         return Character.isWhitespace(c);
     }
 
     char toChar(CharSequence buf) {
-        assert buf.length() == 4;
+		// this can't happen b/c of the way it's getting called.
+		// therefore, no runtime check.
+    	assert buf.length() == 4;
         return (char) Integer.parseInt(buf.toString(), 16);
     }
 
-    BigDecimal num(CharSequence b) {
-        BigDecimal bd = null;
-        try {
-            bd = new BigDecimal(b.toString());
-        } catch (Throwable t) {
-            error("not a number: " + b.toString());
-        }
-        return bd;
-    }
 
     boolean isHex(byte c) {
         switch (c) {
@@ -363,11 +367,9 @@ public class Lexer {
         STRING_START,
         STR_ESC,
         NUMBER_START,
-        ARRAY_START,
         T,
         TR,
         TRU,
-        TRUE,
         F,
         FA,
         FAL,
@@ -411,8 +413,16 @@ public class Lexer {
 
         abstract void tok(String s);
 
-        abstract void tok(BigDecimal s);
-    }
+        //abstract void tok(BigDecimal s);
+        abstract void numberToken(CharSequence cs);
+
+		public void reset() {
+			this.pos = 0;
+			this.state = State.VALUE;
+			this.cache = null;
+			this.hexCache = null;
+		}
+	}
 
 
 }

@@ -1,12 +1,13 @@
 package util.json;
 
-import java.math.BigDecimal;
+import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 public class LexerTest {
 
     static int countTok;
     static int countTokString;
-    static int countTokBD;
+    static int countNumberToken;
 
     static Lexer.CB cb = new Lexer.CB() {
         void tok(Lexer.Token tok) {
@@ -17,72 +18,95 @@ public class LexerTest {
             countTokString++;
         }
 
-        void tok(BigDecimal c) {
-            countTokBD++;
+        void numberToken(CharSequence c) {
+            countNumberToken++;
         }
     };
 
-    static void testClean() {
+    @Test
+    public static void testClean() {
         String json = "{\"a\":19560954609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}}";
         byte[] jsona = json.getBytes();
 
 
         Lexer.lexer.lex(jsona, cb);
-        if (countTok != 14 || countTokString != 4 || countTokBD != 5) {
-            p("failed: invalid token count");
-        }
-        countTok = countTokString = countTokBD = 0;
+        assertEquals(countTok, 14);
+		assertEquals(countTokString, 4);
+		assertEquals(countNumberToken, 5);
+
+        countTok = countTokString = countNumberToken = 0;
 
         json = "{\"a\":\"\\u2603\",\"b\":[1,2,3],\"dindong\":{\"b\":12}}";
         Lexer.lexer.lex(json.getBytes(), cb);
-        if (countTok != 14 || countTokString != 5 || countTokBD != 4) {
-            p("failed: invalid token count");
-        }
-        countTok = countTokString = countTokBD = 0;
+		assertEquals(countTok, 14);
+		assertEquals(countTokString, 5);
+		assertEquals(countNumberToken, 4);
+
+        countTok = countTokString = countNumberToken = 0;
 
         json = "{}";
         Lexer.lexer.lex(json.getBytes(), cb);
-        if (countTok != 2 || countTokString != 0 || countTokBD != 0) {
-            p("failed: invalid token count");
-        }
-        countTok = countTokString = countTokBD = 0;
+		assertEquals(countTok, 2);
+		assertEquals(countTokString, 0);
+		assertEquals(countNumberToken, 0);
+
+        countTok = countTokString = countNumberToken = 0;
 
         json = "{{},{}}";
         Lexer.lexer.lex(json.getBytes(), cb);
-        if (countTok != 7 || countTokString != 0 || countTokBD != 0) {
-            p("failed: invalid token count");
-        }
-        countTok = countTokString = countTokBD = 0;
+		assertEquals(countTok, 7);
+		assertEquals(countTokString, 0);
+		assertEquals(countNumberToken, 0);
+
+        countTok = countTokString = countNumberToken = 0;
 
         json = "[]";
         Lexer.lexer.lex(json.getBytes(), cb);
-        if (countTok != 2 || countTokString != 0 || countTokBD != 0) {
-            p("failed: invalid token count");
-        }
-        countTok = countTokString = countTokBD = 0;
+		assertEquals(countTok, 2);
+		assertEquals(countTokString, 0);
+		assertEquals(countNumberToken, 0);
+
+        countTok = countTokString = countNumberToken = 0;
 
     }
 
-    static void testFail() {
-        String json = "{\"a\":19560954.609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}}";
-        try {
-            Lexer.lexer.lex(json.getBytes(), cb);
-            p("failed: should not be here! 19560954.609845.4456456 is not a number");
-        } catch (RuntimeException re) {
-            p("expected failure: \n\t" + re.getMessage());
-        }
+    // handled higher up (in the callback converting collected number-chars
+	// there are a bunch of pathological cases that COULD be caught in the Lexer but would require
+	// more states, namely, afterSign, afterDecimal and afterE and afterESign
+	// and it would make sense to benchmark
+	//
 
-    }
+//    @Test(expectedExceptions = JSONException.class)
+//    public static void testFail() {
+//        String json = "{\"a\":19560954.609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}}";
+//
+//        Lexer.lexer.lex(json.getBytes(), cb);
+//
+//    }
 
-    static void testNewline() {
+	// For now, the lexer itself doesn't check validity of numbers, allowing any
+	// valid number char in any order, e.g. 12345678eE0++45678E
+	// see above
+	@Test
+	public static void testNonsensicalNumber() {
+		String json = "[12345678eE0++5678E]";
+		countTok = countTokString = countNumberToken = 0;
+		Lexer.lexer.lex(json.getBytes(), cb);
+		assertEquals(countTok, 2);
+		assertEquals(countTokString, 0);
+		assertEquals(countNumberToken, 1);
+	}
+
+	@Test
+    public static void testNewline() {
         String json = "{\"a\":\"\\u2603\",\"b\":[1,2,3],\n\"dindong\":{\"b\":12}}";
+		countTok = countTokString = countNumberToken = 0;
         Lexer.lexer.lex(json.getBytes(), cb);
+		assertEquals(countTok, 14);
+		assertEquals(countTokString, 5);
+		assertEquals(countNumberToken, 4);
     }
 
-    public static void main(String[] args) {
-        testClean();
-        testFail();
-    }
 
     static void p(Object o) {
         System.out.println(o);
