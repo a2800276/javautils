@@ -11,10 +11,10 @@ import static util.crypto.Random.random;
 
 /**
  * Utilities to generate HMACs.
- * <p/>
+ * <p>
  * The size of the keying material used for HMAC should ideally be identical to the block
  * size of the underlying algorithm. (but does not need to be)
- * <p/>
+ * <p>
  * link https://tools.ietf.org/html/rfc2104
  * link http://csrc.nist.gov/publications/fips/fips198-1/FIPS-198-1_final.pdf FIPS-198-1
  */

@@ -11,22 +11,22 @@ import java.util.regex.Pattern;
  * Benchmark is a small utility to quickly and easily run simple
  * Benchmarks on Java code. The code is based entirely on the benchmark
  * utility from Go (see http://golang.org/pkg/testing/).
- * <p/>
+ * <p>
  * In order to write benchmarks, you need to provide a class that has
  * methods with signatures of the form:
- * <p/>
+ * <p>
  * <pre> public void methodNameIrrelevant (Benchmark b) {...} </pre>
  *
  * The benchmarks in the class you wrote will be executed when the
  * following command is run:
  *
  * <pre> java -jar Benchmark
- *  <name.of.class.containing.my.BenchmarkMethods> </pre>
- * <p/>
+ *  {name.of.class.containing.my.BenchmarkMethods} </pre>
+ * <p>
  * ( The above seems to have some classloader issues ... )
- * <p/>
+ * <p>
  * Alternatively, you can run benchmarks within Java code by calling:
- * <p/>
+ * <p>
  * <pre> Benchmark.runBenchmark(MyBenchMark.class); </pre>
  *
  * The Benchmark utility will vary the number of times to run the
@@ -54,17 +54,17 @@ import java.util.regex.Pattern;
  *      }
  *
  *  </pre>
- * <p/>
+ * <p>
  * If <code>setBytes(...)</code> is called in the benchmark test, the
  * benchmarks will display information about the throughput (MB/s) of the code
  * as well as the the average time per operation. The value passed to
  * <code>setBytes(...)</code> is the number of bytes processed in a
  * single iteration, not how many bytes were processed in
  * <code>b.N</code> loop iterations.
- * <p/>
+ * <p>
  * In case the benchmark test requires lengthy setup that should be
  * ignored, you can stop and restart the internal timer like this:
- * <p/>
+ * <p>
  * <pre>
  *    public void myBenchmark (Benchmark b) {
  *      b.stopTimer();
@@ -75,36 +75,36 @@ import java.util.regex.Pattern;
  *      }
  *    }
  *  </pre>
- * <p/>
+ * <p>
  * This class contains three sample benchmarks measuring the
  * performance of string concatenation of <code>String</code>,
  * <code>StringBuffer</code> and <code>StringBuilder</code>. These can
  * be run as follows:
- * <p/>
+ * <p>
  * <pre>
  *     $ java -jar lib/benchmark.jar benchmark.Benchmark
  *            string	     500	   6523698 ns/op	   0.44 MB/s
  *      stringBuffer	   50000	     38646 ns/op	  74.76 MB/s
  *     stringBuilder	   50000	     32237 ns/op	  89.62 MB/s
  *  </pre>
- * <p/>
+ * <p>
  * The results printed are:
- * <p/>
+ * <p>
  * <ul>
  * <li>name of the benchmark method</li>
  * <li>number of times the utility ran the benchmark</li>
  * <li>number of ns per loop</li>
  * <li>number of MB processed per second</li>
  * </ul>
- * <p/>
+ * <p>
  * The tool may also be call as follows:
- * <p/>
+ * <p>
  * <pre>
  *     $ java -jar lib/benchmark.jar benchmark.Benchmark stringB.*
  *      stringBuffer	   50000	     38646 ns/op	  74.76 MB/s
  *     stringBuilder	   50000	     32237 ns/op	  89.62 MB/s
  *  </pre>
- * <p/>
+ * <p>
  * The final argument is an optional regular expression, if provided,
  * only benchmark methods matching this expression are run.
  */
@@ -112,9 +112,9 @@ public class Benchmark {
     /**
      * the number of times the Benchmark utility expects you to perform
      * whatever it is you're benchmarking.
-     * <p/>
+     * <p>
      * A typical benchmark method will look like this:
-     * <p/>
+     * <p>
      * <pre>
      *   public void benchmarkMethod (Benchmark b) {
      *      for (int i = 0; i != b.N; ++i) {
@@ -122,7 +122,7 @@ public class Benchmark {
      *      }
      *   }
      * </pre>
-     * <p/>
+     * <p>
      * The responsibility of running the benchmark <code>N</code> is up to
      * you, the the utility just tells you the value of N...
      */
@@ -222,7 +222,7 @@ public class Benchmark {
 
     /**
      * Example:
-     * <p/>
+     * <p>
      * <pre>
      *   public static void stringBuilder (Benchmark b) {
      *     for (int n =0; n!= b.N; ++n) {
@@ -251,7 +251,7 @@ public class Benchmark {
 
     /**
      * Example:
-     * <p/>
+     * <p>
      * <pre>
      *
      *   public static void string (Benchmark b) {
@@ -360,7 +360,7 @@ public class Benchmark {
      * <code>run</code> times the benchmark function.  It gradually increases the number
      * of benchmark iterations until the benchmark runs for a second in order
      * to get a reasonable measurement.  It prints timing information in this form:
-     * <p/>
+     * <p>
      * <pre>
      * 		testing.BenchmarkHello	100000		19 ns/op
      * </pre>
@@ -391,7 +391,7 @@ public class Benchmark {
 
     /**
      * Example:
-     * <p/>
+     * <p>
      * <pre>
      *   public void stringBuffer (Benchmark b) {
      *     for (int n =0; n!= b.N; ++n) {

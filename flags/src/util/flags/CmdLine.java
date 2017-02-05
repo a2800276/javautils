@@ -9,7 +9,7 @@ package util.flags;
  * <pre>
  * -flagName flagValue
  * </pre>
- * <p/>
+ * <p>
  * In other words, a flag preceded by a dash ('-') is necessary as
  * well as an option name. Standalone flags return an empty string.
  *
@@ -118,7 +118,7 @@ public class CmdLine {
      * <pre>
      *     -fn bla.text -func read_all one two three
      * </pre>
-     * <p/>
+     * <p>
      * returns <code>{"one", "two", "three"}</code>
      *
      * @return

@@ -12,7 +12,8 @@ import java.security.SignatureException;
  * this case, you must ensure that hash algorithm is supported, e.g. providing a
  * SHA512 hash with a DSA key will yield an Exception.
  *
- * @see KeyPair.PublicKey#verify, KeyPair.PrivateKey#sign
+ * @see KeyPair.PublicKey#verify
+ * @see KeyPair.PrivateKey#sign
  */
 public class Signature {
 

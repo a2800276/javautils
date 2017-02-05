@@ -8,14 +8,14 @@ import java.util.regex.Pattern;
 
 /**
  * Trivial implementation of a CSV parser.
- * <p/>
+ * <p>
  * Default field delimiter is ';', default escape character is '\'. These
  * settings may be changed using `setDelimiter()` and `setEscape()`
  * respectively. The escape character will pass the following character through,
  * unless it is used at the end of a line or the end of the file, in which
  * case an error is reported. This means, no newlines in csv fields. (Though of course
  * you can have 'one;two\\ntwo;three'.
- * <p/>
+ * <p>
  * usage:
  * <pre>
  * String csv = "one; two; three"
@@ -292,8 +292,8 @@ public class CSVParser {
      * Retrieve the collected human readable error messages for this csv
      * The report contains one entry per error, each entry is formatted as
      * follows:
-     * <p/>
-     * '<lineno> : <error message>
+     * <p>
+     * '{lineno} : {error message}
      * '	the;offending;line;from;csv
      *
      * @return

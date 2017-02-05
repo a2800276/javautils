@@ -9,31 +9,31 @@ import java.util.*;
  * case you are interested in writing your own specialized callback to
  * use with Lexer the callback contained herein may be a good
  * starting point.
- * <p/>
+ * <p>
  * JSON objects (`{"bla":1}`) are converted to `java.utils.Map'string` (Maps
  * in the interface HashMaps for the implementation), JSON arrrays are
  * converted to `java.util.List'string` (LinkedList for the implementation),
  * JSON Strings become Java Strings, Numbers become `BigDecimal`, `true`
  * and `false` are boolean and null is, well, null.
- * <p/>
- * <h2> Usage </h2> <code>
- * <p/>
+ * <p>
+ * <h2> Usage </h2> 
+ * <p>
  * <code>
  * String json = "{\"a\":19560954609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}}";
  * Object    o = JSON.parseJSON(json);
  * </code>
- * <p/>
+ * <p>
  * In the example above, `o` will be a `java.util.Map` containing three
  * keys, "a", "b" and "dingdong", each Strings. "a"'string value is a
  * BigDecimal, "b"'string an array containing the BigDecimal values 1, 2,
  * and 3 and "dingdong"'string value is another Map ...
- * <p/>
+ * <p>
  * The intended use case for this is to write non-blocking webservices,
  * this interface is meant to provide the functionality to process any
  * scrap of data that happens to be available on the network. This
  * requires a slightly more elaborate interface than the simple verson
  * above:
- * <p/>
+ * <p>
  * <code>
  * JSON json = new JSON();
  * while (arr = bytesAvailableFromSomewhere()) {
@@ -42,22 +42,22 @@ import java.util.*;
  * }
  * Object result = json.obj();
  * </code>
- * <p/>
+ * <p>
  * <h2> Accepted JSON </h2>
- * <p/>
+ * <p>
  * This implementation should be able to handle any JSON conforming to
  * JSON as described here (http://json.org).
- * <p/>
+ * <p>
  * Technically, this parser accepts a superset of JSON that allows
  * redundant ':' and ',' inside of JSON objects and Arrays to be left
  * out, so it would accept:
- * <p/>
+ * <p>
  * <code>
  * { "a" 19560954609845.4456456 "b" [1 2 3] "dindong" {"b" 12}}
  * </code>
- * <p/>
+ * <p>
  * as the equivalent of:
- * <p/>
+ * <p>
  * <code>
  * { "a" : 19560954609845.4456456, "b" : [1 2 3], "dindong" : {"b" 12}}
  * </code>
@@ -79,7 +79,7 @@ public class JSON {
     /**
      * Mungle up an Object into JSON. There are a bunch of
      * cases this can't handle, for example: just any old stuff.
-     * <p/>
+     * <p>
      * Object passed to this method needs to be:
      * <ul>
      * <li> primitive

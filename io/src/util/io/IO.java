@@ -220,7 +220,7 @@ public class IO {
 	 *
 	 *
 	 * @param stream
-	 * @returns true in case the object was closed without issue, otherwise
+	 * @return true in case the object was closed without issue, otherwise
 	 * false. Only for the morbidly curious, I strongly recommend ignoring
 	 * the value
 	 */
@@ -252,13 +252,13 @@ public class IO {
 	/**
 	 * Java's getPath does whatever (?), this tries to return the system
 	 * dependant path component of the filename
-	 * <p/>
+	 * <p>
 	 * This interface sucks. Not sure what this is supposed to
 	 * return. Also it's dependant on the plattform you're running
 	 * on (File.seperator) so it's basically nondeterministic.
-	 * <p/>
+	 * <p>
 	 * Also, I'm no longer sure what gripes I had with Java's getPath...
-	 * <p/>
+	 * <p>
 	 * Returns null if passed null.
 	 */
 	public static String getPath(String fn) {

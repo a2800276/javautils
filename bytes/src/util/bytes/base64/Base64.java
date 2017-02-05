@@ -68,21 +68,20 @@ public class Base64 {
 
 	/**
 	 * Decode a base64 encoded String to a byte array.
-	 * <p/>
+	 * <p>
 	 * This method will throw an IllegalArgumentException in case invalid input
 	 * is provided. NB: this may change in the future to return 'null' in case
 	 * of invalid input...
-	 * <p/>
+	 * <p>
 	 * In order to be valid, it needs to contain Base64 data:
-	 * <p/>
 	 * particularly:
-	 * <p/>
+	 * <p>
 	 * * the provided String's length is a multiple of 4.
 	 * * the provided String must contain only Base64 characters:
 	 * A???Z, a???z, and 0???9, + and /
 	 * * the = is only used for padding and may only occur at the end
 	 * of input.
-	 * <p/>
+	 * <p>
 	 * For convienience, whitespace (" ", "\t", "\r", "\n") is removed
 	 * from the input.
 	 */
