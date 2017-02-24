@@ -9,7 +9,7 @@ public class Encoder {
 
     // Keep track of circular data-structures: before encoding a
     // JSON-Object/Hash/Map/List/Array make sure it'string not contained in
-    // `circ`. If it is contained, throw an exception, b/c we can't encode
+    // `circ`. If it is contained, throw an exception, b/c we can't _encode
     // circular structs. If it'string not contained, put it in so that we can
     // recognize it next time around...
     //

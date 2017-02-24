@@ -123,10 +123,10 @@ public class JSON {
         e.encode(o);
         return e.buf.toString();
 
-        // Of course, there would be a number of ways to encode just any old
+        // Of course, there would be a number of ways to _encode just any old
         // stuff. Easiest would be calling `toString` on unknown classes and
         // encoding their String representation. OR treat them as an
-        // data-containers and encode all their public fields. OR treat them
+        // data-containers and _encode all their public fields. OR treat them
         // as Beans(tm) [yuckyuckyuck].
         //
         // The best way to go would be some sort of `unknown class Handler`
@@ -139,7 +139,7 @@ public class JSON {
 	/** Use "dynamic" encoding, which is just a term I made up. It means
 	 * that Objects that can't be encoded using the default encoding rules
 	 * BUT have a `toJSON` method will be encoded using said `toJSON` method.
-	 * @param o the object to encode
+	 * @param o the object to _encode
 	 * @return a JSON string
 	 */
 	public static String jsonifyDynamic(Object o) {
@@ -150,9 +150,9 @@ public class JSON {
 
 	/**
 	 * If you want to get super fancy you can write a custom encoder that
-	 * really know the classes you want to encode. See the documentation
+	 * really know the classes you want to _encode. See the documentation
 	 * for `CustomEncoder`, i.e. the source code.
-	 * @param o the object to encode
+	 * @param o the object to _encode
 	 * @param enc
 	 * @return
 	 */
