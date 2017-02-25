@@ -3,6 +3,15 @@ package util.test;
 import java.util.*;
 
 /**
+ * Utilities to create random objects for Testing.
+ * These may be:
+ * - Strings
+ * - Integers
+ * - Doubles
+ * - Lists of the above
+ * - Maps<String, Oject> of the above.
+ *
+ *
  * Created by a2800276 on 2017-02-05.
  */
 public class RandomObject {

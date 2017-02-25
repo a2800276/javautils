@@ -2,8 +2,6 @@ package util.test;
 
 import org.testng.annotations.Test;
 
-import java.io.ByteArrayInputStream;
-
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -15,7 +13,7 @@ public class StutteringInputStreamTest {
 	@Test
 	public void testRead() throws Exception {
 		byte [] bs = rnd.randomBytes( 4096 );
-		ByteArrayInputStream is = new StutteringInputStream(bs);
+		StutteringInputStream is = new StutteringInputStream(bs);
 		int num = 0;
 		int read, nread = 0;
 		for (int i = 0; i!= 10; ++i) {
@@ -25,8 +23,23 @@ public class StutteringInputStreamTest {
 			}
 			is.reset();
 		}
-		assertEquals(4096 * 10, nread);
-		assertEquals( 44, num ); // should always have same result with same seed.
+		assertEquals(nread,4096 * 10);
+		assertEquals(num, 31 ); // should always have same result with same seed.
+
+		is.reset();
+		is.max = 100;
+		num = 0;
+		read = 0;
+		nread = 0;
+		for (int i = 0; i!= 10; ++i) {
+			while (-1 != (read = is.read( bs ))) {
+				num += 1;
+				nread += read;
+			}
+			is.reset();
+		}
+		assertEquals(nread, 4096 * 10);
+		assertEquals( num, 426 ); // should always have same result with same seed.
 	}
 
 
