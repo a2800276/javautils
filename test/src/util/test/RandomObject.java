@@ -1,4 +1,4 @@
-package util.json;
+package util.test;
 
 import java.util.*;
 
@@ -18,7 +18,7 @@ public class RandomObject {
 		int n = max - min;
 		return rnd.nextInt( n ) + min;
 	}
-	Object randomObject (int depth) {
+	public Object randomObject (int depth) {
 
 		// equals prob map, list, string, numbe, float
 		// unless depth is 0, in that case no map or list
@@ -38,7 +38,7 @@ public class RandomObject {
 		}
 	}
 
-	Map randomMap (int numKeys, int depth) {
+	public Map randomMap (int numKeys, int depth) {
 
 		Map<String, Object> map = new HashMap<>();
 		for (int i = 0; i!= numKeys; ++i) {
@@ -48,7 +48,7 @@ public class RandomObject {
 		}
 		return map;
 	}
-	List randomList (int n, int depth) {
+	public List randomList (int n, int depth) {
 		List<Object> list = new LinkedList<>();
 		for (int i=0; i!=n; ++i) {
 			list.add( randomObject(depth -1) );
@@ -63,12 +63,12 @@ public class RandomObject {
 			'V', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8',
 			'9', '0', ' '};
 
-	char randomChar() {
+	public char randomChar() {
 		int i = rnd.nextInt( chars.length );
 		return chars[i];
 	}
 
-	String randomString(int n) {
+	public String randomString(int n) {
 		StringBuilder builder = new StringBuilder(  );
 		for (int i = 0; i!=  n; ++i) {
 			builder.append( randomChar() );
@@ -76,11 +76,17 @@ public class RandomObject {
 		return builder.toString();
 	}
 
+	public byte[] randomBytes(int n) {
+		byte[] bs = new byte[n];
+		rnd.nextBytes( bs );
+		return bs;
+	}
+
 	public static void main (String [] args) {
 		RandomObject obj = new RandomObject(  );
 		Map map = obj.randomMap( 10, 5 );
 		p(map);
-		p(JSON.jsonify( map ).length());
+		//p(JSON.jsonify( map ).length());
 	}
 
 	static void p (Object o) {

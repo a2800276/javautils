@@ -1,67 +1,77 @@
 package util.json;
 
 import org.testng.annotations.Test;
+import util.test.RandomObject;
+import util.test.StutteringInputStream;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-public class JSONTest {
+import static org.testng.Assert.*;
+
+public class JSONParseStream {
+	static RandomObject rnd = new RandomObject();
+
 	@Test(expectedExceptions = JSONException.class)
 	public static void testInvalid() {
 		String json = "{{\"a\":19560954609845.4456456}:1,\"b\":[1,2,3],\"dindong\":{\"b\":12}}";
-		Object o = JSON.parse( json );
+		ByteArrayInputStream is = new StutteringInputStream( json.getBytes() );
+		JSON.parseStream( is );
 	}
 
 	@Test(expectedExceptions = JSONException.class)
 	public static void testNoComma() {
 		// too liberal behaviour, key value don't need to be separated by comma
 		String json = "{\"a\" 19560954609845.4456456 \"b\" [1 2 3] \"dindong\" {\"b\" 12}}";
-		JSON.parse( json );
+		ByteArrayInputStream is = new StutteringInputStream( json.getBytes() );
+		JSON.parseStream( is );
 	}
 
 	@Test(expectedExceptions = NumberFormatException.class)
 	public static void testInvalidFloat() {
 		String json = "{\"a\":19560954.609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}}";
-		JSON.parse( json );
+		ByteArrayInputStream is = new StutteringInputStream( json.getBytes() );
+		JSON.parseStream( is );
 	}
 
 	@Test(expectedExceptions = JSONException.class)
 	public static void testIncomplete() {
 		String json = "{\"a\":19560954609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}";
-		JSON.parse( json );
+		ByteArrayInputStream is = new StutteringInputStream( json.getBytes() );
+		JSON.parseStream( is );
 	}
 
 	@Test
-	public static void testState() {
-		String json = "{\"a\":19560954609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}}";
+	public static void testState() throws IOException {
+		Object testObject = rnd.randomMap( 10, 3 );
 
-		JSON j = new JSON();
-		byte[] a = json.getBytes();
-		byte[] b = new byte[1];
-		for (int i = 0; /*i!=a.length*/ ; ++i) {
-			System.arraycopy( a, i, b, 0, 1 ); /* heh? whydidothat? */
-			j.parse( b );
-			if (j.done()) break; /* to test this I guess */
-						   /* should provide parse(byte[], off, len) */
-		}
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		StreamEncoder enc = new StreamEncoder( bos );
+		enc.encode( testObject );
+		byte[] bs = bos.toByteArray();
 
-		Object o1 = JSON.parse( json );
-		assertEquals( o1, j.obj() );
+		Object res0 = JSON.parseStream( new ByteArrayInputStream( bs ) );
+		StutteringInputStream sis = new StutteringInputStream( bs );
+		Object res1 = JSON.parseStream( sis );
+
+		assertTrue( sis.countCalled != 1 );
+		assertEquals( testObject, res0 );
+		assertEquals( testObject, res1 );
 	}
 
 	@Test
 	public static void testRndFail() {
-		String json = "{\"key\":\"value\":\"value\"}";
+		StutteringInputStream is = new StutteringInputStream( "{\"key\":\"value\":\"value\"}".getBytes() );
 		try {
-			JSON.parse( json );
+			JSON.parseStream( is );
 			fail( "testRndFail missed incorrect COLON" );
 		} catch (JSONException e) {
 			assertTrue( true );
 		}
-		json = "[,,,]";
+		is = new StutteringInputStream( "[,,,]".getBytes() );
 		try {
-			JSON.parse( json );
+			JSON.parseStream( is );
 			fail( "testRndFail missed incorrect COMMA" );
 		} catch (JSONException e) {
 			assertTrue( true );
@@ -72,17 +82,21 @@ public class JSONTest {
 	@Test(expectedExceptions = JSONException.class)
 	public static void testReuse() {
 		byte[] bs = "{\"a\":19560954609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}}".getBytes();
+		StutteringInputStream is = new StutteringInputStream( bs );
 		JSON json = new JSON();
-		json.parse( bs );
-		json.parse( bs );
+		json.parse( is );
+		is.reset();
+		json.parse( is );
 	}
 
 	@Test
 	public static void testReuseReset() {
 		byte[] bs = "{\"a\":19560954609845.4456456,\"b\":[1,2,3],\"dindong\":{\"b\":12}}".getBytes();
+		StutteringInputStream is = new StutteringInputStream( bs );
 		JSON json = new JSON();
 		json.parse( bs );
 		json.reset();
+		is.reset();
 		json.parse( bs );
 
 	}

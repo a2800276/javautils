@@ -94,7 +94,7 @@ public class Encoder {
      * override this in subclasses to allow custom encoding
      */
     boolean canEncode(Object o) {
-        return true;
+        return false;
     }
 
     void encodeCustom(Object o) {
@@ -124,7 +124,7 @@ public class Encoder {
             if (canEncode(o)) {
                 encodeCustom(o);
             } else {
-                error(o.getClass());
+                error("unexpected object: " + o.getClass());
             }
         }
     }

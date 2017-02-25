@@ -1,5 +1,8 @@
 package util.json;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -70,15 +73,15 @@ public class JSON {
 
 
 	public enum NumberType {
-    	 BigDecimal // default
+		 BigDecimal // default
 		,Integer
 		,Long
 		,Float
 		,Double
 	}
 
-    LexerCB cb;
-    Object obj; // result.
+	LexerCB cb;
+	Object obj; // result.
 
 	public JSON () {
 		this(NumberType.BigDecimal);
@@ -87,12 +90,22 @@ public class JSON {
 		this.cb = new LexerCB(type);
 	}
 
-    /**
-     * Utility method to parse a String containing valid JSON
-     */
-    public static Object parse(String json) {
-    	return parse(json, NumberType.BigDecimal);
-    }
+	/**
+	 * Utility method to parse a String containing valid JSON
+	 */
+	public static Object parse(String json) {
+		return parse(json, NumberType.BigDecimal);
+	}
+
+	public static Object parseStream(InputStream is) {
+		JSON json = new JSON();
+		json.parse( is );
+		if (json.done()) {
+			return json.obj();
+		} else {
+			throw new JSONException( "JSON object incomplete" );
+		}
+	}
 
 	/**
 	 * Utility method to parse a String containing valid JSON returning
@@ -103,38 +116,60 @@ public class JSON {
 	public static Object parse(String json, NumberType type) {
 		LexerCB cb = new LexerCB(type);
 		Lexer.lexer.lex(json.getBytes(), cb);
+		if (!cb.done) {
+			throw new JSONException( "JSON object incomplete" );
+		}
 		return cb.stack.pop();
 	}
 
 	/**
-     * Munge up an Object into JSON. There are a bunch of
-     * cases this can't handle, for example: just any old stuff.
-     * <p>
-     * Object passed to this method needs to be:
-     * <ul>
-     * <li> primitive
-     * <li> java.util.Map
-     * <li> java.util.List
-     * <li> an Array of one of the above
-     * </ul>
-     */
-    public static String jsonify(Object o) {
-        Encoder e = new Encoder();
-        e.encode(o);
-        return e.buf.toString();
+	 * Munge up an Object into JSON. There are a bunch of
+	 * cases this can't handle, for example: just any old stuff.
+	 * <p>
+	 * Object passed to this method needs to be:
+	 * <ul>
+	 * <li> primitive
+	 * <li> java.util.Map
+	 * <li> java.util.List
+	 * <li> an Array of one of the above
+	 * </ul>
+	 */
+	public static String jsonify(Object o) {
+		Encoder e = new Encoder();
+		e.encode( o );
+		return e.buf.toString();
 
-        // Of course, there would be a number of ways to _encode just any old
-        // stuff. Easiest would be calling `toString` on unknown classes and
-        // encoding their String representation. OR treat them as an
-        // data-containers and _encode all their public fields. OR treat them
-        // as Beans(tm) [yuckyuckyuck].
-        //
-        // The best way to go would be some sort of `unknown class Handler`
-        // to stuff into the encoder to roll your own strategy for dealing
-        // with this... `CustomEncoder` attempts this.
-        //
-        // I have yet to decide an will do so when I need to.
-    }
+		// Of course, there would be a number of ways to _encode just any old
+		// stuff. Easiest would be calling `toString` on unknown classes and
+		// encoding their String representation. OR treat them as an
+		// data-containers and _encode all their public fields. OR treat them
+		// as Beans(tm) [yuckyuckyuck].
+		//
+		// The best way to go would be some sort of `unknown class Handler`
+		// to stuff into the encoder to roll your own strategy for dealing
+		// with this... `CustomEncoder` attempts this.
+		//
+		// I have yet to decide an will do so when I need to.
+	}
+
+	/**
+	 * Encode object directly to Stream instead of creating a String
+	 * representation.
+	 * This is a utility method that wraps any underlying IOExceptions
+	 * that are encountered to JSONExceptions (subclass of Runtime).
+	 * In case you need more control over these exceptions, you may use
+	 * StreamEncoder directly.
+	 * @param o
+	 * @param os
+	 */
+	public static void jsonify(Object o, OutputStream os) {
+		StreamEncoder enc = new StreamEncoder( os );
+		try {
+			enc.encode( o );
+		} catch (IOException ioe) {
+			throw new JSONException( ioe );
+		}
+	}
 
 	/** Use "dynamic" encoding, which is just a term I made up. It means
 	 * that Objects that can't be encoded using the default encoding rules
@@ -143,10 +178,10 @@ public class JSON {
 	 * @return a JSON string
 	 */
 	public static String jsonifyDynamic(Object o) {
-        Encoder e = new DynamicEncoder();
-        e.encode(o);
-        return e.buf.toString();
-    }
+		Encoder e = new DynamicEncoder();
+		e.encode(o);
+		return e.buf.toString();
+	}
 
 	/**
 	 * If you want to get super fancy you can write a custom encoder that
@@ -157,29 +192,60 @@ public class JSON {
 	 * @return
 	 */
 	public static String jsonifyCustom(Object o, CustomEncoder enc) {
-        enc.encode(o);
-        return enc.buf.toString();
-    }
+		enc.encode(o);
+		return enc.buf.toString();
+	}
 
-    /**
-     * Parse whatever bits of JSON you have available to you.
-     */
-    public void parse(byte[] arr) {
-        parse(arr, 0, arr.length);
-    }
+	static final int READ_BUFFER_SZ = 4096;
 
-    public void parse(byte[] arr, int off, int len) {
-        Lexer.lexer.lex(arr, off, len, this.cb);
-    }
+	/**
+	 * Parse a JSON object from the provided InputStream. All parse
+	 * methods in the class taking an InputStream parameter will attempt
+	 * to completely read the stream, so if the stream contains a
+	 * sequence of JSON objects, this method is not approriate.
+	 *
+	 * @param is The IpnutStream to read from
+	 */
+	public void parse(InputStream is){
+		parse(is, READ_BUFFER_SZ);
+	}
 
-    /**
-     * Returns whether the parser is in a consistent, balanced state.
-     * Once the parser is `done` passing further data to it via `parse`
-     * will trigger an Exception.
-     */
-    public boolean done() {
-        return this.cb.done;
-    }
+	/**
+	 * Parse from a stream. Hint may be provided to determine size
+	 * of read buffer.
+	 * @param is InputStream to read from
+	 * @param hint expected size
+	 */
+	public void parse(InputStream is, int hint) {
+		byte[] buf = new byte[hint];
+		int read;
+		try {
+		while ( -1 != (read = is.read( buf )) ) {
+			parse(buf, 0, read);
+		}
+		} catch (IOException ioe) {
+			throw new JSONException( ioe );
+		}
+	}
+	/**
+	 * Parse whatever bits of JSON you have available to you.
+	 */
+	public void parse(byte[] arr) {
+		parse(arr, 0, arr.length);
+	}
+
+	public void parse(byte[] arr, int off, int len) {
+		Lexer.lexer.lex(arr, off, len, this.cb);
+	}
+
+	/**
+	 * Returns whether the parser is in a consistent, balanced state.
+	 * Once the parser is `done` passing further data to it via `parse`
+	 * will trigger an Exception.
+	 */
+	public boolean done() {
+		return this.cb.done;
+	}
 
 	/**
 	 * reset the parser to reuse the instance once a complete JSON object has been parsed.
@@ -188,115 +254,115 @@ public class JSON {
 		cb.reset();
 	}
 
-    /**
-     * Retrieve the results of the parse. You need to ensure that the
-     * complete JSON object has been passed to parse, else this will throw
-     * and Exception. Ideally, call `done()` before trying to retrieve the
-     * results
-     */
-    public Object obj() {
-        if (!done()) {
-            throw new JSONException("not done!");
-        }
-        if (null == this.obj) {
-            this.obj = this.cb.stack.pop();
-        }
-        return this.obj;
-    }
+	/**
+	 * Retrieve the results of the parse. You need to ensure that the
+	 * complete JSON object has been passed to parse, else this will throw
+	 * and Exception. Ideally, call `done()` before trying to retrieve the
+	 * results
+	 */
+	public Object obj() {
+		if (!done()) {
+			throw new JSONException("not done!");
+		}
+		if (null == this.obj) {
+			this.obj = this.cb.stack.pop();
+		}
+		return this.obj;
+	}
 
-    public static class LexerCB extends Lexer.CB {
+	public static class LexerCB extends Lexer.CB {
 
-    	public LexerCB (NumberType type) {
-    		this.type = type;
+		public LexerCB (NumberType type) {
+			this.type = type;
 		}
 		public LexerCB() {
-    		this(NumberType.BigDecimal);
+			this(NumberType.BigDecimal);
 		}
 		public void reset() {
-    		super.reset();
-    		this.stack = new Stack();
-    		this.done = false;
-    		this.expectNextCommaOrRCurly = false;
+			super.reset();
+			this.stack = new Stack();
+			this.done = false;
+			this.expectNextCommaOrRCurly = false;
 		}
-        Stack<Object> stack = new Stack<Object>();
-        boolean done;
-        boolean expectNextCommaOrRCurly;
+		Stack<Object> stack = new Stack<Object>();
+		boolean done;
+		boolean expectNextCommaOrRCurly;
 		NumberType type;
 
-        void tok(Lexer.Token t) {
+		void tok(Lexer.Token t) {
 
-            if (done) {
-                error();
-            }
-            if (expectNextCommaOrRCurly) {
-                switch (t) {
-                    case RCURLY:
-                    case COMMA:
-                        expectNextCommaOrRCurly = false;
-                        break;
-                    default:
-                        error("unbalanced key value pairs");
-                }
-            }
-            switch (t) {
-                case LCURLY:
-                    stack.push(map());
-                    break;
-                case LSQUARE:
-                    stack.push(list());
-                    break;
-                case RCURLY:
-                    if (!(stack.peek() instanceof Map)) {
-                        error("misplaced }");
-                    }
-                    Map m = (Map) stack.pop();
-                    stash(m);
-                    break;
-                case RSQUARE:
-                    if (!(stack.peek() instanceof List)) {
-                        error("misplaced ]");
-                    }
-                    List l = (List) stack.pop();
-                    stash(l);
-                    break;
-                case TRUE:
-                    stash(true);
-                    break;
-                case FALSE:
-                    stash(false);
-                    break;
-                case NULL:
-                    stash(null);
-                    break;
-                case COMMA:
-                    // if (!(stack.peek() instanceof List)) {
-                    //  error("misplaced ,");
-                    // }
-                    break;
-                case COLON:
-                    if (!(stack.peek() instanceof Key)) {
-                        error("misplaced :");
-                    }
-                    break;
-                default:
-                    error();
-            }
-        }
+			if (done) {
+				error();
+			}
+			if (expectNextCommaOrRCurly) {
+				switch (t) {
+					case RCURLY:
+					case COMMA:
+						expectNextCommaOrRCurly = false;
+						break;
+					default:
+						error("unbalanced key value pairs");
+				}
+			}
+			switch (t) {
+				case LCURLY:
+					stack.push(map());
+					break;
+				case LSQUARE:
+					stack.push(list());
+					break;
+				case RCURLY:
+					if (!(stack.peek() instanceof Map)) {
+						error("misplaced }");
+					}
+					Map m = (Map) stack.pop();
+					stash(m);
+					break;
+				case RSQUARE:
+					if (!(stack.peek() instanceof List)) {
+						error("misplaced ]");
+					}
+					List l = (List) stack.pop();
+					stash(l);
+					break;
+				case TRUE:
+					stash(true);
+					break;
+				case FALSE:
+					stash(false);
+					break;
+				case NULL:
+					stash(null);
+					break;
+				case COMMA:
+					// if (!(stack.peek() instanceof List)) {
+					//  error("misplaced ,");
+					// }
+					break;
+				case COLON:
+					if (!(stack.peek() instanceof Key)) {
+						error("misplaced :");
+					}
+					break;
+				default:
+					error();
+			}
+		}
 
-        void tok(String s) {
-            if (done) {
-                error();
-            }
-            if (stack.peek() instanceof Map) {
-                stack.push(new Key(s));
-            } else {
-                stash(s);
-            }
-        }
+		void tok(String s) {
+			if (done) {
+				error();
+			}
+			if (stack.peek() instanceof Map) {
+				stack.push(new Key(s));
+			} else {
+				stash(s);
+			}
+		}
 
-        void numberToken (CharSequence cs) {
+		void numberToken (CharSequence cs) {
 			Object o;
-        	switch (type) {
+			switch (type) {
 				case BigDecimal:
 					o = new BigDecimal(cs.toString());
 					break;
@@ -318,54 +384,54 @@ public class JSON {
 			stash(o);
 		}
 
-        void stash(Object o) {
-            // stack is empty, done
-            if (0 == stack.size()) {
-                done = true;
-                stack.push(o);
-                return;
-            }
-            Object top = stack.peek();
-            if (top instanceof List) {
-                ((List<Object>) top).add(o);
-            } else if (top instanceof Key) {
-                String key = ((Key) stack.pop()).string;
-                assert stack.size() > 0;
-                assert stack.peek() instanceof Map;
-                ((Map<String, Object>) stack.peek()).put(key, o);
-                expectNextCommaOrRCurly = true;
-            } else {
-                error("unexpected: " + o.getClass().getName() + " after: " + (stack.peek().getClass().getName()));
-            }
-        }
+		void stash(Object o) {
+			// stack is empty, done
+			if (0 == stack.size()) {
+				done = true;
+				stack.push(o);
+				return;
+			}
+			Object top = stack.peek();
+			if (top instanceof List) {
+				((List<Object>) top).add(o);
+			} else if (top instanceof Key) {
+				String key = ((Key) stack.pop()).string;
+				assert stack.size() > 0;
+				assert stack.peek() instanceof Map;
+				((Map<String, Object>) stack.peek()).put(key, o);
+				expectNextCommaOrRCurly = true;
+			} else {
+				error("unexpected: " + o.getClass().getName() + " after: " + (stack.peek().getClass().getName()));
+			}
+		}
 
-        Map map() {
-            return new HashMap();
-        }
+		Map map() {
+			return new HashMap();
+		}
 
-        List list() {
-            return new LinkedList();
-        }
+		List list() {
+			return new LinkedList();
+		}
 
-        void error() {
-            error("calling parser in done state. did you forget to call reset()?");
-        }
+		void error() {
+			error("calling parser in done state. did you forget to call reset()?");
+		}
 
-        void error(String m) {
-            throw new JSONException(m);
-        }
-    }
+		void error(String m) {
+			throw new JSONException(m);
+		}
+	}
 
-    static class Key {
-        String string;
+	static class Key {
+		String string;
 
-        // Internal Marker class to keep track of keys and values on the
-        // stack of the parser. A `Key` object may only be placed on top of
-        // a `Map` (JSON Object). Encountering a `COLON` should only happen
-        // when there is a `Key` on top of the stack, etc.
-        Key(String string) {
-            this.string = string;
-        }
-    }
+		// Internal Marker class to keep track of keys and values on the
+		// stack of the parser. A `Key` object may only be placed on top of
+		// a `Map` (JSON Object). Encountering a `COLON` should only happen
+		// when there is a `Key` on top of the stack, etc.
+		Key(String string) {
+			this.string = string;
+		}
+	}
 
 }

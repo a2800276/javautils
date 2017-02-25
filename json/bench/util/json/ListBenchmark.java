@@ -1,6 +1,7 @@
 package util.json;
 
 import util.benchmark.Benchmark;
+import util.test.RandomObject;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
