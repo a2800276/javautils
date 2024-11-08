@@ -60,7 +60,7 @@ public class SignatureTest {
 	static LinkedList<KeyPair.PublicKey> loadRSAPublicKeys() throws IOException {
 		LinkedList<KeyPair.PublicKey> l = new LinkedList<>();
 		for (String bit : rsa_key_fn) {
-			InputStream stream = ClassLoader.class.getResourceAsStream("/keys/rsa_key_" + bit + ".x509");
+			InputStream stream = SignatureTest.class.getResourceAsStream("/keys/rsa_key_" + bit + ".x509");
 			l.add(KeyPair.PublicKey.loadX509(stream));
 		}
 		return l;
@@ -69,7 +69,7 @@ public class SignatureTest {
 	static LinkedList<KeyPair.PublicKey> loadECPublicKeys() throws IOException {
 		LinkedList<KeyPair.PublicKey> l = new LinkedList<>();
 		for (String curve : ecc_key_fn) {
-			InputStream stream = ClassLoader.class.getResourceAsStream("/keys/" + curve + "_key.x509");
+			InputStream stream = SignatureTest.class.getResourceAsStream("/keys/" + curve + "_key.x509");
 			l.add(KeyPair.PublicKey.loadX509(stream));
 		}
 		return l;
@@ -93,7 +93,8 @@ public class SignatureTest {
 			case SHA256withRSA:
 				return KeyPair.generateKeyPair(KeyPair.Algorithm.RSA);
 			case NONEwithECDSA:
-				return KeyPair.generateKeyPair(KeyPair.Algorithm.P224);
+				// P224 has been deprecated.
+				//return KeyPair.generateKeyPair(KeyPair.Algorithm.P224);
 			case SHA1withECDSA:
 				return KeyPair.generateKeyPair(KeyPair.Algorithm.P256);
 			case SHA256withECDSA:
@@ -126,7 +127,7 @@ public class SignatureTest {
 	private List<KeyPair.PrivateKey> loadRSAPrivateKeys() throws IOException {
 		LinkedList<KeyPair.PrivateKey> l = new LinkedList<>();
 		for (String bit : rsa_key_fn) {
-			InputStream stream = ClassLoader.class.getResourceAsStream("/keys/rsa_key_" + bit + ".pkcs8");
+			InputStream stream = SignatureTest.class.getResourceAsStream("/keys/rsa_key_" + bit + ".pkcs8");
 			l.add(KeyPair.PrivateKey.loadPKCS8(stream));
 		}
 		return l;
@@ -152,7 +153,7 @@ public class SignatureTest {
 		List<KeyPair.PrivateKey> privateKeys = loadECCPrivateKeys();
 		List<KeyPair.PublicKey> publicKeys = loadECPublicKeys();
 
-		for (int i = 0; i != privateKeys.size(); ++i) {
+		for (int i = 1; i != privateKeys.size(); ++i) {
 			// (EC) DSA signatures aren't deterministic. Just make sure round trip, etc. works
 			KeyPair.PrivateKey privateKey = privateKeys.get(i);
 			KeyPair.PublicKey pub = publicKeys.get(i);
@@ -169,7 +170,7 @@ public class SignatureTest {
 	private List<KeyPair.PrivateKey> loadECCPrivateKeys() throws IOException {
 		LinkedList<KeyPair.PrivateKey> l = new LinkedList<>();
 		for (String curve : ecc_key_fn) {
-			InputStream stream = ClassLoader.class.getResourceAsStream("/keys/" + curve + "_key.pkcs8");
+			InputStream stream = SignatureTest.class.getResourceAsStream("/keys/" + curve + "_key.pkcs8");
 			l.add(KeyPair.PrivateKey.loadPKCS8(stream));
 		}
 		return l;
@@ -181,7 +182,9 @@ public class SignatureTest {
 	@Test
 	public void testECDSAVerify() throws Exception {
 		LinkedList<KeyPair.PublicKey> keys = loadECPublicKeys();
-		for (int i = 0; i != keys.size(); ++i) {
+		// NOT A BUG! i starts at 1 because we are skipping the 0th test
+		// as it uses a deprecated curve.
+		for (int i = 1; i != keys.size(); ++i) {
 			KeyPair.PublicKey pub = keys.get(i);
 			assertTrue(Signature.verify(Signature.Algorithm.SHA1withECDSA, pub, (ecc_signatures[i * 4]), ecc_message));
 			assertTrue(Signature.verify(Hash.Algorithm.SHA1, pub, (ecc_signatures[i * 4]), ecc_message));

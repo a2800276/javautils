@@ -22,23 +22,23 @@ public class CertificateTest {
 	static byte[] DER_BYTES;
 
 	static {
-		InputStream inputStream = ClassLoader.class.getResourceAsStream(PEM_FN);
+		InputStream inputStream = CertificateTest.class.getResourceAsStream(PEM_FN);
 		PEM_BYTES = IO.readAll(inputStream, 1024);
-		inputStream = ClassLoader.class.getResourceAsStream(DER_FN);
+		inputStream = CertificateTest.class.getResourceAsStream(DER_FN);
 		DER_BYTES = IO.readAll(inputStream);
-		inputStream = ClassLoader.class.getResourceAsStream(PEM_ENCODED_AS_DER_FN);
+		inputStream = CertificateTest.class.getResourceAsStream(PEM_ENCODED_AS_DER_FN);
 		PEM_ENCODED_AS_DER_BYTES = IO.readAll(inputStream);
 
 	}
 
 	@Test
 	public void testLoadCertificateInputStream() throws Exception {
-		InputStream stream = ClassLoader.class.getResourceAsStream(PEM_FN);
+		InputStream stream = CertificateTest.class.getResourceAsStream(PEM_FN);
 		java.security.cert.Certificate cert = Certificate.loadCertificate(stream);
 		basicTests(cert, "7089244469030293291760083333884364146");
 		stream.close();
 
-		stream = ClassLoader.class.getResourceAsStream(DER_FN);
+		stream = CertificateTest.class.getResourceAsStream(DER_FN);
 		java.security.cert.Certificate cert2 = Certificate.loadCertificate(stream);
 		basicTests(cert2, "44");
 		stream.close();

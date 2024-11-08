@@ -126,7 +126,7 @@ public class KeyPair {
 		AlgorithmParameterSpec spec;
 		String KPG_INSTANCE_ID;
 		switch (algorithm) {
-			case P224:
+			//case P224:
 			case P256:
 			case P384:
 			case P521:
@@ -252,7 +252,7 @@ public class KeyPair {
 		 * JCA: secp224r1
 		 * OID: 1.3.132.0.33
 		 */
-		P224,
+		// P224,
 		/**
 		 * NIST P256
 		 * JCA: secp256r1
@@ -277,8 +277,8 @@ public class KeyPair {
 				case DSA:
 				case RSA:
 					return this.toString();
-				case P224:
-					return "secp224r1";
+				//case P224:
+				//	return "secp224r1";
 				case P256:
 					return "secp256r1";
 				case P384:
