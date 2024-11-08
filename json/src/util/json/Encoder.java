@@ -144,6 +144,7 @@ public class Encoder {
             buf.append(",");
         }
         buf.setCharAt(buf.length() - 1, '}');
+        unCheckCircular();
     }
 
     void encode(List l) {
@@ -154,6 +155,7 @@ public class Encoder {
             buf.append(",");
         }
         buf.setCharAt(buf.length() - 1, ']');
+        unCheckCircular();
     }
 
     void encodeArray(Object arr) {
@@ -172,6 +174,7 @@ public class Encoder {
             }
         }
         buf.setCharAt(buf.length() - 1, ']');
+        unCheckCircular();
     }
 
     void checkCircular(Object m) {
@@ -180,5 +183,8 @@ public class Encoder {
         } else {
             circ.add(m);
         }
+    }
+    void unCheckCircular() {
+        circ.remove(circ.size() - 1);
     }
 }

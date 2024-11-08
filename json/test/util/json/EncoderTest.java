@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 public class EncoderTest {
@@ -64,6 +65,21 @@ public class EncoderTest {
             caught = true;
         }
         assertTrue(caught);
+
+        Map map2 = new java.util.HashMap();
+        map = new java.util.HashMap();
+        map.put("bla", "bla");
+
+        map2.put("bla", map);
+        map2.put("blub", map);
+        caught = false;
+        try {
+            p(JSON.jsonify(map2));
+        } catch (JSONException re) {
+            assertEquals(re.getMessage(), "circular");
+            caught = true;
+        }
+        assertFalse(caught);
     }
 
     @Test
